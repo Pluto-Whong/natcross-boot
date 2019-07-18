@@ -2,7 +2,7 @@ server:
   port: ${SERVER_PORT:10080}
 logging:
   logdir: /logs/person
-  console-level: trace
+  console-level: debug
   file-level: trace
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS}[%5p] --- [%-24t] [%-50C{50}][%-6L]: %m%n"
@@ -39,8 +39,18 @@ spring:
       datasource:
         master:
           type: com.alibaba.druid.pool.DruidDataSource
-          driver-class-name: org.sqlite.JDBC
-          url: jdbc:sqlite:/G:/database/natcross.db3
+          driver-class-name: com.mysql.jdbc.Driver
+          url: jdbc:mysql://${DATA_URL:127.0.0.1}/natcross?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: ${DATA_USER:root}
+          password: ${DATA_PASSWORD:root}
+  jpa:
+    hibernate:
+      ddl-auto: update
+#      naming:
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl #按字段名字建表
+    show-sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html

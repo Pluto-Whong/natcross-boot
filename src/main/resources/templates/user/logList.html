@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" href="../css/bootstrap.css" th:href="@{/css/bootstrap.min.css}">-->
+
+    <!--<link href="../css/bootstrap-table.css" rel="stylesheet">-->
+
+    <!--<link href="../css/jquery.treegrid.css" rel="stylesheet">-->
+
+    <!--<link rel="stylesheet" href="../css/myCommon.css">-->
+
+    <!--<script src="../js/jquery-3.3.1.min.js" th:src="@{/js/jquery-3.3.1.min.js}"></script>-->
+    <!--<script src="../js/bootstrap.js" th:src="@{/js/bootstrap.min.js}"></script>-->
+
+    <!--<script type="text/javascript" src="../js/bootstrap-table.js"></script>-->
+    <!--<script type="text/javascript" src="../js/bootstrap-table-zh-CN.js"></script>-->
+    <!--<script type="text/javascript" src="../js/bootstrap-table-export.js"></script>-->
+
+    <!--<script type="text/javascript" src="../js/bootstrap-table-treegrid.js"></script>-->
+    <!--<script type="text/javascript" src="../js/jquery.treegrid.min.js"></script>-->
+
+
+    <title>日志管理</title>
+
+
+</head>
+<body>
+
+<div class="panel-body" style="padding-bottom:0px;">
+
+    <div class="panel panel-default" style="margin-bottom: 2px">
+        <div class="panel-body">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label class="left20">查询信息</label>
+                    <input type="text" class="form-control" id="search" name="role" placeholder="用户名、操作、事件..."
+                           th:value="${searchText}">
+                    <input type="button" id="btnQuery" style="margin-left: 20px" class="btn btn-default btn-primary"
+                           value="查 询">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <table id="logTable">
+
+    </table>
+</div>
+
+
+<script th:inline="javascript">
+
+    var $table = $("#logTable");
+    $(function () {
+        $table.bootstrapTable({
+//            url: /*[[@{user/role}]]*/ null,        //请求后台的URL（*）
+            url:"/log/getLogList",        //请求后台的URL（*）
+            method: 'post',                      //请求方式（*）
+            contentType : "application/x-www-form-urlencoded;charset=UTF-8", //post方式必须设置,get方式设置application/json
+            dataType: 'json',
+            striped: true,                      //是否显示行间隔色
+//            toolbar: '#toolbar',                //工具按钮用哪个容器
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            sidePagination: 'server',           //分页方式：client客户端分页，server服务端分页（*）
+            pagination: true,                   //是否显示分页（*）
+            pageNumber: 1,                      //初始化加载第一页，默认第一页
+            pageSize: 10,                        //每页的记录行数（*）
+            pageList: [10, 25, 50],          //可供选择的每页的行数（*）
+//            search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            showColumns: true,                  //是否显示所有的列（选择显示的列）
+            minimumCountColumns: 2,             //最少允许的列数
+            showRefresh: true,                  //是否显示刷新按钮
+            clickToSelect: true,                //是否启用点击选中行
+//            showToggle:true,                    //是否显示详细视图和列表视图的切换按钮
+            sortable: true,                     //是否启用排序
+            sortOrder: "desc",                   //排序方式
+            sortName: 'insertTime',
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                  //是否显示父子表
+            idField: 'userId',
+            showExport: true,                     //是否显示导出
+            exportDataType: "selected",              //basic', 'all', 'selected'.
+            exportTypes: ['txt','csv', 'excel','xlsx'],
+            exportOptions:{
+                //ignoreColumn: [0,0],            //忽略某一列的索引
+                fileName: '数据导出',              //文件名称设置
+                worksheetName: 'Sheet1',          //表格工作区名称
+                tableName: '数据导出表',
+                excelstyles: ['background-color', 'color', 'font-size', 'font-weight'],
+                //onMsoNumberFormat: DoOnMsoNumberFormat
+            },
+            buttonsAlign:"right",  //按钮位置
+
+            columns: [
+                {
+                    field:'selected',
+                    checkbox: true
+                }, {
+                    field:'rowNumber',
+                    title: '序号',
+                    align: 'center',
+                    halign: 'center',
+                    formatter: function (value, row, index) {
+                        var options = $table.bootstrapTable('getOptions');
+                        return options.pageSize * (options.pageNumber - 1) + index + 1;
+                    }
+                }, {
+                    field: 'userName',
+                    title: '操作用户',
+                    sortable: true
+                }, {
+                    field: 'action',
+                    title: '操作'
+                },{
+                    field: 'event',
+                    title: '事件'
+                },{
+                    field: 'host',
+                    title: 'IP'
+                },{
+                    field: 'insertTime',
+                    title: '操作时间',
+                    sortable: true
+                }
+            ],
+            queryParamsType: '',
+            queryParams: function (params) {
+                //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+                var temp = {
+                    pageSize: params.pageSize,                         //页面大小
+                    pageNumber: params.pageNumber, //页码
+                    sortName: params.sortName,      //排序列名
+                    sortOrder: params.sortOrder,  //排位命令（desc，asc）
+                    searchText: $('#search').val()
+
+                };
+                return temp;
+            },
+            rowStyle: function (row, index) {
+                //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
+                var strclass = "";
+                if (row.userName == "admin") {
+                    strclass = 'danger';//
+                }
+                else {
+                    return {};
+                }
+                return { classes: strclass }
+            },
+            onLoadSuccess: function () {
+                console.log("数据加载成功！");
+            },
+            onLoadError: function () {
+                console.log("数据加载失败！");
+            },
+            onDblClickRow: function (row, $element) {
+
+            }
+
+        });
+
+
+        $('#btnQuery').click(function () {
+            $table.bootstrapTable('refresh');
+        });
+
+
+    })
+</script>
+</body>
+</html>

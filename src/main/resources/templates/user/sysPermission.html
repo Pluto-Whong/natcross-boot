@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" href="../css/bootstrap.css" th:href="@{/css/bootstrap.min.css}">-->
+
+    <!--<link href="../css/bootstrap-table.css" rel="stylesheet">-->
+    <!--<link href="../css/jquery.treegrid.css" rel="stylesheet">-->
+
+
+    <!--<script src="../js/jquery-3.3.1.min.js" th:src="@{/js/jquery-3.3.1.min.js}"></script>-->
+    <!--<script src="../js/bootstrap.js" th:src="@{/js/bootstrap.min.js}"></script>-->
+
+    <!--<script type="text/javascript" src="../js/bootstrap-table.js"></script>-->
+    <!--<script type="text/javascript" src="../js/bootstrap-table-zh-CN.js"></script>-->
+    <!--<script type="text/javascript" src="../js/bootstrap-table-treegrid.js"></script>-->
+    <!--<script type="text/javascript" src="../js/jquery.treegrid.min.js"></script>-->
+
+
+    <title>权限管理</title>
+</head>
+<body>
+<div class="container-fluid panel-body" style="padding-bottom:0px">
+
+    <!--用ajax提交，这里form必须注销-->
+    <!--<form class="form-horizontal" method="post">-->
+        <div class="panel panel-default" style="margin-bottom: 0px">
+            <div class="panel-body h4font">
+                角色名称：<span th:text="${sysRole.role}">角色名称</span>
+                （
+                <small style="color: #00a7d0" th:text="${sysRole.description}">角色描述</small>
+                ）
+            </div>
+        </div>
+
+        <div id="toolbar" class="btn-group">
+            <button id="btn_save" type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>保存
+            </button>
+            <button id="btn_expand" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>展开
+            </button>
+            <button id="btn_backward" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>返回
+            </button>
+        </div>
+
+
+        <table id="sysRolePermissionTable">
+
+        </table>
+    <!--</form>-->
+
+</div>
+
+
+<script th:inline="javascript">
+    $(function () {
+        var $table = $("#sysRolePermissionTable");
+        $table.bootstrapTable({
+            url: '/user/getPermission/' + /*[[${sysRole.roleId}]]*/null,
+            method: 'post',                      //请求方式（*）
+            contentType: "application/x-www-form-urlencoded;charset=UTF-8", //post方式必须设置,get方式设置application/json
+            dataType: 'json',
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            showRefresh: true,                  //是否显示刷新按钮
+//            clickToSelect: true,                //是否启用点击选中行
+            sidePagination: 'client',            //客户端分页
+            pagination: true,                   //是否显示分页（*）
+            pageNumber: 1,                      //初始化加载第一页，默认第一页
+            pageSize: 100,                        //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],          //可供选择的每页的行数（*）
+            searchText: '',
+
+            idField: 'permissionId',
+            columns: [
+                {
+                    field: 'roleId',
+                    checkbox: true,
+                    formatter: function (value, row, index) {
+                        if (row.roleId != null)  //根据行里字段判断是否选中
+                            return {
+                                checked: true//设置选中
+                            };
+                        return value;
+                    }
+                }, {
+                    field: 'permissionName',
+                    title: '权限名称'
+                }, {
+                    field: 'permission',
+                    title: '权限'
+                }
+            ],
+            treeShowField: 'permissionName',
+            parentIdField: 'parentId',
+            onLoadSuccess: function (data) {
+                $table.treegrid({
+                    initialState: 'collapsed',//收缩
+                    treeColumn: 1,//指明第几列数据改为树形
+                    expanderExpandedClass: 'glyphicon glyphicon-triangle-bottom',
+                    expanderCollapsedClass: 'glyphicon glyphicon-triangle-right',
+                    onChange: function () {
+                        $table.bootstrapTable('resetWidth');
+                    }
+                });
+            },
+            onDblClickRow: function (row, $element) {
+                alert(row.permission);
+            }
+        });
+
+        $('#btn_backward').click(function () {
+            var url = "/user/rlist";
+            $('#container').load(url);
+        });
+
+        $('#btn_expand').click(function () {
+//            $table.treegrid('getRootNodes').treegrid('expandRecursive');
+            $table.treegrid('expandAll');
+        });
+        $('#btn_save').click(function (e) {
+            var selectedLine = $table.bootstrapTable('getSelections');
+            var idList;
+            if (selectedLine.length < 1) {
+                idList = null;
+            }
+            else {
+                idList = selectedLine[0].permissionId;
+                for (var i = 1; i < selectedLine.length; i++) {
+                    idList += ',' + selectedLine[i].permissionId;
+                }
+            }
+            var authorizeUrl = "/user/toAuthorize";
+            $.ajax({
+                type: "post",
+                url: authorizeUrl,
+                data: {roleId: /*[[${sysRole.roleId}]]*/null, permissionIdList: idList},
+                dataType: "json",
+
+                success: function (result) {
+                    console.log("sucess:"+result.sucess);
+                    console.log("sucess:"+result.url);
+
+                    $table.bootstrapTable('refresh');
+//                     $('#container').load(result.url);
+
+                },
+                error: function (result) {
+//                        console.log(result);
+                    console(result.error);
+                    alert("出现error:"+result.responseText);
+                }
+            });
+
+
+        })
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+.bgColor{
+    background-color:rgba(243,66,111,0.15)
+}
+.divBorder{
+    border: solid 1px rgba(12,24,255,0.15);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+.divBorder2{
+    border: solid 1px rgba(12,24,255,0.15);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 3px;
+    border-radius: 5px;
+}
+.h4font{
+    margin-top: 0px;
+    font-family: 微软雅黑;
+    font-weight: 600;
+}
+.left20{
+    margin-left: 15px;
+}

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" href="css/bootstrap.css">-->
+    <!--<link rel="stylesheet" href="css/bootstrapValidator.min.css">-->
+
+
+
+    <!--<script src="js/jquery-3.3.1.min.js"></script>-->
+    <!--<script src="js/bootstrap.js"></script>-->
+    <!--<script src="js/bootstrapValidator.min.js"></script>-->
+
+
+    <title>角色配置</title>
+
+
+</head>
+<body >
+<div class="container-fluid panel-body" style="padding-bottom:0px">
+    <!--th:action="@{/user/roleAdd}"-->
+    <form class="form-horizontal validation-form" id="formAdd" action="#" th:action="@{/user/roleAdd}"  method="post">
+        <input type="hidden" name="roleId" th:value="${sysRole.roleId}">
+        <div class="panel panel-default" style="margin-bottom: 0px">
+            <h4 class="panel panel-heading h4font">
+                角色配置
+                <small>（*星号是必填项）</small>
+            </h4>
+
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-1 control-label"><span style="color: red;font-weight: bold">＊</span>角色名</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="role" placeholder="角色名称" th:value="${sysRole.role}">
+                    </div>
+                    <label class="control-label">（输入类型是
+                        字母、数字、下划线或它们的组合，最长16位）</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">角色描述</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="description" placeholder="描述" th:value="${sysRole.description}">
+                    </div>
+                    <label class="control-label">（简单描述角色的使用范围和作用）</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label"><span style="color: red;font-weight: bold">＊</span>状态</label>
+
+                    <div class="col-sm-11">
+                        <label class="radio-inline">
+                            <input type="radio" value="true" checked  name="available"  th:checked="${sysRole.available}">正常
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" value="false"  name="available" th:checked="${!sysRole.available}">禁用
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">创建时间</label>
+                    <div class="col-sm-4">
+                        <input type="text" readonly class="form-control" name="createTime" placeholder=""
+                               th:value="${#temporals.format(sysRole.createTime, 'yyyy-MM-dd HH:mm:ss')}">
+                    </div>
+                    <label class="control-label">（系统自动生成）</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">有效期</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control  date form_date" name="expiredDate" placeholder="有效期"
+                               th:value="${#temporals.format(sysRole.expiredDate, 'yyyy-MM-dd')}">
+                    </div>
+                    <label class="control-label">（置空表示永不过期）</label>
+                </div>
+
+
+            </div>
+        </div>
+
+        <br>
+        <div class="form-group">
+            <div class="col-sm-offset-5 col-sm-1">
+                <button type="submit" class="btn btn-primary">保 存</button>
+            </div>
+
+            <div class="col-sm-1">
+                <a name="backToRoleList" href="javascript:void(0)" th:href="@{/user/rlist}" class="btn btn-primary">返 回</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script th:inline="javascript">
+
+    $(function () {
+        $('a[name="backToRoleList"]').click(function (e) {
+            e.preventDefault();
+            var url=$(this).attr('href');
+
+            $('#container').load(url);
+
+//            var dataText='角色管理';
+//            var $tabContainer = $('#container');
+//            var $tabId = $tabContainer.data('tabs').find(dataText);
+//
+//            if($tabId.length>0)
+//            {
+//                $tabContainer.data('tabs').showTab(dataText);
+//            }
+//            else {
+//                $tabContainer.data("tabs").addTab({id:dataText, text: dataText, closeable: true, url: url});
+//            }
+        });
+        var $frm =  $('form[id="formAdd"]');
+        $frm.ajaxForm(function (data) {
+            console.log(data);
+            if(data!=0)
+            {
+                $('#container').load(data);
+            }
+            else
+            {
+                alert("数据提交失败！");
+            }
+        });
+
+//        $('input:radio').click(function (e) {
+//           var radioName = $(this).attr('name');
+//           if(radioName=='available')
+//           {
+//               console.log("点击available");
+//               $('input[name="available2"]').prop('checked',false);
+//           }
+//           else if(radioName=='available2')
+//           {
+//               console.log("点击available2");
+//               $('input[name="available"]').prop('checked',false);
+//           }
+//        });
+
+        $frm.bootstrapValidator({
+            message: '这是无效输入值',
+            feedbackIcons: {/*输入框不同状态，显示图片的样式*/
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields:{
+                role: {/*键名username和input name值对应*/
+                    message: 'The role is not valid',
+//                    threshold :  6 , //有6字符以上才发送ajax请求，（input中输入一个字符，插件会向服务器发送一次，设置限制，6字符以上才开始）
+                    validators: {
+                        notEmpty: {/*非空提示*/
+                            message: '角色不能为空'
+                        },
+                        stringLength: {/*长度提示*/
+                            min: 3,
+                            max: 30,
+                            message: '用户名长度必须在3到30之间'
+                        },
+                        remote: {//ajax验证。server result:{"valid",true or false} 向服务发送当前input name值，获得一个json数据。例表示正确：{"valid",true}
+                            url: '/user/checkRoleExists',//验证地址
+                            message: '角色已存在',//提示消息
+                            delay :  2000,//每输入一个字符，就发ajax请求，服务器压力还是太大，设置2秒发送一次ajax（默认输入一个字符，提交一次，服务器压力太大）
+                            type: 'POST',//请求方式
+//                            自定义提交数据，默认值提交当前input value
+                            data: function(validator) {
+                                return {
+                                    roleId: /*[[${sysRole.roleId}]]*/null,
+                                    oldRole:/*[[${sysRole.role}]]*/null,
+                                    newRole: $('input[name="role"]').val()
+                                };
+                            }
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9_\.]+$/,
+                            message: '角色名由数字字母下划线和.组成'
+                        }
+                    }
+                }
+            }
+        });
+
+        //bootstrapValidator导致表单ajax提交出现两次提交Bug解决
+        $("form.validation-form").each(function() {
+            var $form = $(this);
+            $form.bootstrapValidator().on('success.form.bv', function(e) {
+                // 阻止默认事件提交
+                e.preventDefault();
+            });
+        });
+
+        $('.form_date').datetimepicker({
+            format:'yyyy-mm-dd',//显示格式可为yyyymm/yyyy-mm-dd/yyyy.mm.dd
+            language:  'zh-TW',
+//            initialDate: new Date(),        //初始化日期.默认new Date()当前日期
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2, //打开时显示的视图。0-'hour' 1-'day' 2-'month' 3-'year' 4-'decade'
+            minView: 2,   //最小时间视图。默认0-'hour'
+            forceParse: 0    //当输入非格式化日期时，强制格式化。默认true
+        });
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

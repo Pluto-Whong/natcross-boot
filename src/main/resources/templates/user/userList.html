@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" href="../css/bootstrap.css" th:href="@{/css/bootstrap.min.css}">-->
+
+    <!--<link href="../css/bootstrap-table.css" rel="stylesheet">-->
+
+    <!--<link href="../css/jquery.treegrid.css" rel="stylesheet">-->
+
+    <!--<link rel="stylesheet" href="../css/myCommon.css">-->
+
+    <!--<script src="../js/jquery-3.3.1.min.js" th:src="@{/js/jquery-3.3.1.min.js}"></script>-->
+    <!--<script src="../js/bootstrap.js" th:src="@{/js/bootstrap.min.js}"></script>-->
+
+    <!--<script type="text/javascript" src="../js/bootstrap-table.js"></script>-->
+    <!--<script type="text/javascript" src="../js/bootstrap-table-zh-CN.js"></script>-->
+    <!--<script type="text/javascript" src="../js/bootstrap-table-export.js"></script>-->
+
+    <!--<script type="text/javascript" src="../js/bootstrap-table-treegrid.js"></script>-->
+    <!--<script type="text/javascript" src="../js/jquery.treegrid.min.js"></script>-->
+
+
+    <title>用户管理</title>
+
+
+</head>
+<body>
+
+<div class="panel-body" style="padding-bottom:0px;">
+
+    <div class="panel panel-default" style="margin-bottom: 2px">
+        <div class="panel-body">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label class="left20">用户名称</label>
+                    <input type="text" class="form-control" id="search" name="role" placeholder="用户名称"
+                           th:value="${searchText}">
+                    <input type="button" id="btnQuery" style="margin-left: 20px" class="btn btn-default btn-primary"
+                           value="查 询">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toolbar" class="btn-group">
+        <button id="btn_add" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+        </button>
+        <button id="btn_edit" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+        </button>
+        <button id="btn_delete_tip" type="button" class="btn btn-default" data-target="#deleteModal" data-toggle="modal">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+        </button>
+        <button id="btn_detail" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>详情
+        </button>
+        <button id="btn_role" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>角色
+        </button>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title">删除提示</h3>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        你想删除选中数据吗？
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btn_delete">确 认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table id="roleTable">
+
+    </table>
+</div>
+
+
+<script th:inline="javascript">
+
+    function PrefixInteger(num, length) {
+        return (Array(length).join('0') + num).slice(-length);
+    }
+
+    function expiredDateFormat(cellval) {
+        var dateVal = cellval;
+        if (cellval != null) {
+            var currentDate = dateVal.year +"-"+PrefixInteger(dateVal.monthValue, 2) + "-"+ PrefixInteger(dateVal.dayOfMonth, 2);
+
+            return currentDate;
+        }
+    }
+
+    function createTimeFormat(cellval) {
+        var dateVal = cellval;
+        if (cellval != null) {
+            var currentDate = dateVal.year +"-"+PrefixInteger(dateVal.monthValue, 2) + "-"+ PrefixInteger(dateVal.dayOfMonth, 2)
+                +" "+PrefixInteger(dateVal.hour, 2)+":"+PrefixInteger(dateVal.minute, 2)+":"+PrefixInteger(dateVal.second, 2);
+
+            return currentDate;
+        }
+    }
+
+
+    var $table = $("#roleTable");
+    $(function () {
+        $table.bootstrapTable({
+//            url: /*[[@{user/role}]]*/ null,        //请求后台的URL（*）
+            url:"/user/getUserList",        //请求后台的URL（*）
+            method: 'post',                      //请求方式（*）
+            contentType : "application/x-www-form-urlencoded;charset=UTF-8", //post方式必须设置,get方式设置application/json
+            dataType: 'json',
+            striped: true,                      //是否显示行间隔色
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            sidePagination: 'server',           //分页方式：client客户端分页，server服务端分页（*）
+            pagination: true,                   //是否显示分页（*）
+            pageNumber: 1,                      //初始化加载第一页，默认第一页
+            pageSize: 10,                        //每页的记录行数（*）
+            pageList: [10, 25, 50],          //可供选择的每页的行数（*）
+//            search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            showColumns: true,                  //是否显示所有的列（选择显示的列）
+            minimumCountColumns: 2,             //最少允许的列数
+            showRefresh: true,                  //是否显示刷新按钮
+            clickToSelect: true,                //是否启用点击选中行
+//            showToggle:true,                    //是否显示详细视图和列表视图的切换按钮
+            sortable: true,                     //是否启用排序
+            sortOrder: "desc",                   //排序方式
+            sortName: 'createTime',
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                  //是否显示父子表
+            idField: 'userId',
+            showExport: true,                     //是否显示导出
+            exportDataType: "selected",              //basic', 'all', 'selected'.
+            exportTypes: ['txt','csv', 'excel','xlsx'],
+            exportOptions:{
+                //ignoreColumn: [0,0],            //忽略某一列的索引
+                fileName: '数据导出',              //文件名称设置
+                worksheetName: 'Sheet1',          //表格工作区名称
+                tableName: '数据导出表',
+                excelstyles: ['background-color', 'color', 'font-size', 'font-weight'],
+                //onMsoNumberFormat: DoOnMsoNumberFormat
+            },
+            buttonsAlign:"right",  //按钮位置
+
+            columns: [
+                {
+                    field:'selected',
+                    checkbox: true,
+                    formatter: function (value, row, index) {
+                        if (row.userName == 'admin')
+                            return {
+                                disabled:true,
+                                checked: false//设置选中
+                            };
+                        return value;
+                    }
+                }, {
+                    field:'rowNumber',
+                    title: '序号',
+                    align: 'center',
+                    halign: 'center',
+                    formatter: function (value, row, index) {
+                        var options = $table.bootstrapTable('getOptions');
+                        return options.pageSize * (options.pageNumber - 1) + index + 1;
+                    }
+                }, {
+                    field: 'userName',
+                    title: '用户名称',
+                    sortable: true
+                }, {
+                    field: 'name',
+                    title: '昵称'
+                },{
+                    field: 'tel',
+                    title: '电话'
+                },{
+                    field: 'email',
+                    title: '邮箱'
+                },{
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true
+//                    formatter:function (value,row,index) {
+//                        return  createTimeFormat(value);
+//                    }
+
+                }, {
+                    field: 'expiredDate',
+                    title: '过期时间',
+                    sortable: true
+//                    formatter:function (value,row,index) {
+//                        return  expiredDateFormat(value);
+//                    }
+
+                }, {
+                    field: 'state',
+                    title: '状态',
+                    sortable: true,
+                    formatter:function (value,row,index) {
+                        if(row.userName=='admin') return "锁定";
+                        if(value == 0) return "未认证";
+                        else if(value ==1 ) return "正常";
+                        else return "禁用";
+                    }
+                }
+
+            ],
+            queryParamsType: '',
+            queryParams: function (params) {
+                //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+                var temp = {
+                    pageSize: params.pageSize,                         //页面大小
+                    pageNumber: params.pageNumber, //页码
+                    sortName: params.sortName,      //排序列名
+                    sortOrder: params.sortOrder,  //排位命令（desc，asc）
+                    searchText: $('#search').val()
+
+                };
+                return temp;
+            },
+            rowStyle: function (row, index) {
+                //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
+                var strclass = "";
+                if (row.role == "admin") {
+                    strclass = 'danger';//
+                }
+                else {
+                    return {};
+                }
+                return { classes: strclass }
+            },
+            onLoadSuccess: function () {
+                console.log("用户数据加载成功！");
+            },
+            onLoadError: function () {
+                console.log("用户数据加载失败！");
+            },
+            onDblClickRow: function (row, $element) {
+
+            }
+
+        });
+
+        $('#btn_edit').click(function () {
+            var selectedLine = $table.bootstrapTable('getSelections');
+            if (selectedLine.length < 1) {
+                alert("请选中一行数据");
+            }
+            else {
+                var idList = selectedLine[0].userId;
+
+                var url = "/user/edit/"+idList;
+                $('#container').load(url);
+
+            }
+        });
+
+        $('#btnQuery').click(function () {
+            $table.bootstrapTable('refresh');
+        });
+
+        $('#btn_add').click(function () {
+            var url = "/user/add";
+            $('#container').load(url);
+        });
+
+        $('#btn_delete').click(function () {
+            var selectedLine = $table.bootstrapTable('getSelections');
+            if (selectedLine.length < 1) {
+                alert("请选中一行数据");
+            }
+            else {
+                var idList = selectedLine[0].userId;
+                for (var i = 1; i < selectedLine.length; i++) {
+                    idList += ','+ selectedLine[i].userId;
+                }
+//                console.log(idList);
+
+                var deleteUrl = "/user/delete";
+                $.ajax({
+                    type:"post",
+                    url:deleteUrl,
+                    data:{userIdList:idList},
+                    dataType:"json",
+                    success:function (result) {
+//                        console.log(result);
+                        $('#container').load(result.url);
+                        $('.modal-backdrop').remove();//移除遮罩
+                        $("body").removeClass('modal-open'); //移除模态
+                    },
+                    error:function (result) {
+//                        console.log(result);
+                        alert(result.responseText);
+                    }
+                });
+
+            }
+        });
+
+        $('#btn_role').click(function () {
+            var selectedLine = $table.bootstrapTable('getSelections');
+            if (selectedLine.length < 1) {
+                alert("请选中一行数据");
+            }
+            else {
+                var idList = selectedLine[0].userId;
+
+                var url = "/user/toListUserRole/"+idList;
+                $('#container').load(url);
+            }
+        });
+    })
+</script>
+</body>
+</html>

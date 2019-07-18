@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" href="../css/bootstrap.css" th:href="@{/css/bootstrap.min.css}">-->
+
+    <!--<link href="../css/bootstrap-table.css" rel="stylesheet">-->
+    <!--<link href="../css/jquery.treegrid.css" rel="stylesheet">-->
+
+
+    <!--<script src="../js/jquery-3.3.1.min.js" th:src="@{/js/jquery-3.3.1.min.js}"></script>-->
+    <!--<script src="../js/bootstrap.js" th:src="@{/js/bootstrap.min.js}"></script>-->
+
+    <!--<script type="text/javascript" src="../js/bootstrap-table.js"></script>-->
+    <!--<script type="text/javascript" src="../js/bootstrap-table-zh-CN.js"></script>-->
+    <!--<script type="text/javascript" src="../js/bootstrap-table-treegrid.js"></script>-->
+    <!--<script type="text/javascript" src="../js/jquery.treegrid.min.js"></script>-->
+
+
+    <title>角色分配</title>
+</head>
+<body>
+<div class="container-fluid panel-body" style="padding-bottom:0px">
+
+    <!--用ajax提交，这里form必须注销-->
+    <!--<form class="form-horizontal" method="post">-->
+    <div class="panel panel-default" style="margin-bottom: 0px">
+        <div class="panel-body h4font">
+            用户名：<span th:text="${user.userName}">用户名称</span>
+            （
+            <small style="color: #00a7d0" th:text="${user.name}">用户昵称</small>
+            ）
+        </div>
+    </div>
+
+    <div id="toolbar" class="btn-group">
+        <button id="btn_save" type="submit" class="btn btn-default">
+            <span class="glyphicon glyphicon-save" aria-hidden="true"></span>保存
+        </button>
+        <button id="btn_backward" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>返回
+        </button>
+    </div>
+
+
+    <table id="userRoleTable">
+
+    </table>
+    <!--</form>-->
+
+</div>
+
+
+<script th:inline="javascript">
+    $(function () {
+        var $table = $("#userRoleTable");
+        $table.bootstrapTable({
+            url: '/user/toGetUserRole/' + /*[[${user.userId}]]*/null,
+            method: 'post',                      //请求方式（*）
+            contentType: "application/x-www-form-urlencoded;charset=UTF-8", //post方式必须设置,get方式设置application/json
+            dataType: 'json',
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            showRefresh: true,                  //是否显示刷新按钮
+//            clickToSelect: true,                //是否启用点击选中行
+            sidePagination: 'client',            //客户端分页
+            pagination: true,                   //是否显示分页（*）
+            pageNumber: 1,                      //初始化加载第一页，默认第一页
+            pageSize: 100,                        //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],          //可供选择的每页的行数（*）
+            searchText: '',
+
+            idField: 'roleId',
+            columns: [
+                {
+                    field: 'userId',
+                    checkbox: true,
+                    formatter: function (value, row, index) {
+                        if (row.userId != null)  //根据行里字段判断是否选中
+                            return {
+                                checked: true//设置选中
+                            };
+                        return value;
+                    }
+                }, {
+                    field: 'role',
+                    title: '角色名称'
+                }, {
+                    field: 'description',
+                    title: '角色描述'
+                }
+            ],
+
+            rowStyle: function (row, index) {
+                //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
+                var strclass = "";
+                if (row.role == "admin") {
+                    strclass = 'danger';//
+                }
+                else {
+                    return {};
+                }
+                return { classes: strclass }
+            },
+            onLoadSuccess: function () {
+                console.log("角色数据加载成功！");
+            },
+            onLoadError: function () {
+                console.log("角色数据加载失败！");
+            },
+            onDblClickRow: function (row, $element) {
+                alert(row.role);
+            }
+        });
+
+        $('#btn_backward').click(function () {
+            var url = "/user/ulist";
+            $('#container').load(url);
+        });
+
+
+        $('#btn_save').click(function (e) {
+            var selectedLine = $table.bootstrapTable('getSelections');
+            var idList;
+            if (selectedLine.length < 1) {
+                idList = null;
+            }
+            else {
+                idList = selectedLine[0].roleId;
+                for (var i = 1; i < selectedLine.length; i++) {
+                    idList += ',' + selectedLine[i].roleId;
+                }
+            }
+            var authorizeUrl = "/user/toGrantUserRole";
+            $.ajax({
+                type: "post",
+                url: authorizeUrl,
+                data: {userId: /*[[${user.userId}]]*/null, roleIdList: idList},
+                dataType: "json",
+
+                success: function (result) {
+                    console.log("sucess:"+result.sucess);
+                    console.log("sucess:"+result.url);
+
+                    $table.bootstrapTable('refresh');
+//                     $('#container').load(result.url);
+
+                },
+                error: function (result) {
+//                        console.log(result);
+                    console(result.error);
+                    alert("出现error:"+result.responseText);
+                }
+            });
+
+
+        })
+
+    })
+</script>
+</body>
+</html>
