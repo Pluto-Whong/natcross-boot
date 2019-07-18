@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import person.pluto.system.model.ResultModel;
 import person.pluto.system.model.enumeration.ResultEnum;
 
+import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,9 +27,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public ResultModel globalExceptionHandler(HttpServletRequest request, HttpServletResponse response,
-            Exception exception) {
+    public Object globalExceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception)
+            throws Exception {
         log.error("unkown error!", exception);
         return ResultModel.of(ResultEnum.FAIL);
     }
+
+    @ExceptionHandler(value = AuthorizationException.class)
+    @ResponseBody
+    public Object authorizationExceptionExceptionHandler() throws Exception {
+        return new ModelAndView("/403");
+    }
+
 }

@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import person.pluto.system.jpaservice.ILoginService;
 import person.pluto.system.model.LoginResult;
-import person.pluto.system.service.ILoginService;
 
 @Controller
 public class HomeController {

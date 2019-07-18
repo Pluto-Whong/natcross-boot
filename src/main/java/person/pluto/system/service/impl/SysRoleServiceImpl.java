@@ -1,8 +1,8 @@
 package person.pluto.system.service.impl;
 
-import person.pluto.system.entity.User;
-import person.pluto.system.mapper.UserMapper;
-import person.pluto.system.service.IUserService;
+import person.pluto.system.entity.SysRole;
+import person.pluto.system.mapper.SysRoleMapper;
+import person.pluto.system.service.ISysRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  * @since 2019-07-18 17:13:41
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService {
 
 
 }

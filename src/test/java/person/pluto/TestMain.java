@@ -1,5 +1,7 @@
 package person.pluto;
 
+import org.apache.shiro.authz.UnauthenticatedException;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -15,7 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 public class TestMain {
 
     public static void main(String[] args) throws Exception {
-
+        Exception exception = new UnauthenticatedException();
+        if (exception instanceof UnauthenticatedException) {
+            System.err.println(123);
+        }
     }
 
 }

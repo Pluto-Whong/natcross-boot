@@ -12,10 +12,10 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import person.pluto.system.entity.SysPermission;
-import person.pluto.system.entity.SysRole;
-import person.pluto.system.entity.User;
-import person.pluto.system.service.IUserService;
+import person.pluto.system.jpaentity.SysPermission;
+import person.pluto.system.jpaentity.SysRole;
+import person.pluto.system.jpaentity.User;
+import person.pluto.system.jpaservice.IUserService;
 
 public class MyShiroRealm extends AuthorizingRealm {
     @Resource

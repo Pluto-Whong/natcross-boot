@@ -1,4 +1,4 @@
-package person.pluto.system.service.impl;
+package person.pluto.system.jpaservice.impl;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -9,8 +9,8 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
+import person.pluto.system.jpaservice.ILoginService;
 import person.pluto.system.model.LoginResult;
-import person.pluto.system.service.ILoginService;
 
 @Service
 public class LoginServiceImpl implements ILoginService {

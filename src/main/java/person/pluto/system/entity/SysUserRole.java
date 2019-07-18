@@ -1,8 +1,6 @@
 package person.pluto.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import lombok.Data;
@@ -20,22 +18,16 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("sys_role")
-public class SysRole implements Serializable {
+@TableName("sys_user_role")
+public class SysUserRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "role_id", type = IdType.AUTO)
+    @TableField("role_id")
     private Integer roleId;
 
-    @TableField("available")
-    private Boolean available;
-
-    @TableField("description")
-    private String description;
-
-    @TableField("role")
-    private String role;
+    @TableField("user_id")
+    private Integer userId;
 
 
 }

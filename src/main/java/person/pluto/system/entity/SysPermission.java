@@ -1,100 +1,53 @@
 package person.pluto.system.entity;
 
-import org.hibernate.annotations.GenericGenerator;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
+import java.io.Serializable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
-import javax.persistence.*;
-import java.util.List;
+/**
+ * <p>
+ * 
+ * </p>
+ *
+ * @author Pluto
+ * @since 2019-07-18 17:13:41
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+@TableName("sys_permission")
+public class SysPermission implements Serializable {
 
-@Entity
-public class SysPermission {
-    @Id
-    @GenericGenerator(name = "generator", strategy = "native")
-    @GeneratedValue(generator = "generator")
-    private Integer permissionId;// 主键.
-    @Column(nullable = false)
-    private String permissionName;// 名称.
-    @Column(columnDefinition = "enum('menu','button')")
-    private String resourceType;// 资源类型，[menu|button]
-    private String url;// 资源路径.
-    private String permission; // 权限字符串,menu例子：role:*，button例子：role:create,role:update,role:delete,role:view
-    private Long parentId; // 父编号
-    private String parentIds; // 父编号列表
-    private Boolean available = Boolean.TRUE;
-    // 角色 -- 权限关系：多对多关系;
-    @ManyToMany
-    @JoinTable(name = "SysRolePermission", joinColumns = { @JoinColumn(name = "permissionId") }, inverseJoinColumns = {
-            @JoinColumn(name = "roleId") })
-    private List<SysRole> roles;
+    private static final long serialVersionUID = 1L;
 
-    public Integer getPermissionId() {
-        return permissionId;
-    }
+    @TableId(value = "permission_id", type = IdType.AUTO)
+    private Integer permissionId;
 
-    public void setPermissionId(Integer permissionId) {
-        this.permissionId = permissionId;
-    }
+    @TableField("available")
+    private Boolean available;
 
-    public String getPermissionName() {
-        return permissionName;
-    }
+    @TableField("parent_id")
+    private Long parentId;
 
-    public void setPermissionName(String permissionName) {
-        this.permissionName = permissionName;
-    }
+    @TableField("parent_ids")
+    private String parentIds;
 
-    public String getResourceType() {
-        return resourceType;
-    }
+    @TableField("permission")
+    private String permission;
 
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
-    }
+    @TableField("permission_name")
+    private String permissionName;
 
-    public String getUrl() {
-        return url;
-    }
+    @TableField("resource_type")
+    private String resourceType;
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    @TableField("url")
+    private String url;
 
-    public String getPermission() {
-        return permission;
-    }
 
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getParentIds() {
-        return parentIds;
-    }
-
-    public void setParentIds(String parentIds) {
-        this.parentIds = parentIds;
-    }
-
-    public Boolean getAvailable() {
-        return available;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
-    }
-
-    public List<SysRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<SysRole> roles) {
-        this.roles = roles;
-    }
 }

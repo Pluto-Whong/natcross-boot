@@ -1,4 +1,4 @@
-package person.pluto.system.service;
+package person.pluto.system.jpaservice;
 
 import person.pluto.system.model.LoginResult;
 
