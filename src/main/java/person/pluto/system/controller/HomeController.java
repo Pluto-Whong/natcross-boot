@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import person.pluto.system.jpaservice.ILoginService;
+import person.pluto.system.jpaservice.IJpaLoginService;
 import person.pluto.system.model.LoginResult;
 
 @Controller
 public class HomeController {
 
     @Autowired
-    private ILoginService loginService;
+    private IJpaLoginService loginService;
 
     @RequestMapping({ "/", "/index" })
     public String index() {

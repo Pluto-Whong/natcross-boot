@@ -9,11 +9,11 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
-import person.pluto.system.jpaservice.ILoginService;
+import person.pluto.system.jpaservice.IJpaLoginService;
 import person.pluto.system.model.LoginResult;
 
 @Service
-public class LoginServiceImpl implements ILoginService {
+public class JpaLoginServiceImpl implements IJpaLoginService {
     @Override
     public LoginResult login(String userName, String password) {
         LoginResult loginResult = new LoginResult();

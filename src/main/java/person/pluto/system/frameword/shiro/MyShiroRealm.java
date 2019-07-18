@@ -15,11 +15,11 @@ import org.apache.shiro.util.ByteSource;
 import person.pluto.system.jpaentity.SysPermission;
 import person.pluto.system.jpaentity.SysRole;
 import person.pluto.system.jpaentity.User;
-import person.pluto.system.jpaservice.IUserService;
+import person.pluto.system.jpaservice.IJpaUserService;
 
 public class MyShiroRealm extends AuthorizingRealm {
     @Resource
-    private IUserService userService;
+    private IJpaUserService userService;
 
     // 权限信息，包括角色以及权限
     @Override
