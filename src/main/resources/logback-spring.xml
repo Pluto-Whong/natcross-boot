@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds"
+	debug="false">
+	<springProperty scope="context" name="appname" source="spring.application.name" />
+	<springProperty scope="context" name="logdir" source="logging.logdir" defaultvalue="/logs/person" />
+
+	<!-- 日志记录器级别 -->
+	<springProperty scope="context" name="consoleLevel" source="logging.console-level" defaultvalue="trace"/>
+	<springProperty scope="context" name="fileLevel" source="logging.file-level" defaultvalue="trace"/>
+	
+	<!-- 分包级别 -->
+	<springProperty scope="context" name="root" source="logging.level.root" value="info"/>
+	<springProperty scope="context" name="person.pluto" source="logging.level.person.pluto" value="trace"/>
+
+	<contextName>${appname}</contextName>
+
+	<appender name="consoleLog"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>${consoleLevel}</level>
+		</filter>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>
+				<pattern>%d{HH:mm:ss.SSS} [%-10thread] [%-45logger{36}] [%-5level] [%-4line] - %msg%n</pattern>
+			</pattern>
+		</layout>
+	</appender>
+
+	<appender name="fileInfoLog"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则 如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天 
+			的日志改名为今天的日期。即，<File> 的日志都是当天的。 -->
+		<File>${logdir}/${appname}.log</File>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>${fileLevel}</level>
+		</filter>
+		<!--滚动策略，按照时间滚动 TimeBasedRollingPolicy -->
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间 -->
+			<FileNamePattern>${logdir}/${appname}.log.%d{yyyy-MM-dd}.%i
+			</FileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 1GB -->
+				<maxFileSize>1GB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<!--日志输出编码格式化 -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%-10thread] [%-45logger{36}] [%-5level] [%-4line] - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="errorInfoLog"
+		class="ch.qos.logback.core.FileAppender">
+		<!--日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则 如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天 
+			的日志改名为今天的日期。即，<File> 的日志都是当天的。 -->
+		<File>${logdir}/error.${appname}.log</File>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+		</filter>
+		<!--日志输出编码格式化 -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-10thread] [%-45logger{36}] [%-5level] [%-4line] - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="${root}">
+		<appender-ref ref="consoleLog" />
+		<appender-ref ref="fileInfoLog" />
+		<appender-ref ref="errorInfoLog" />
+	</root>
+	
+	<logger level="${person.pluto}" name="person.pluto"/>
+	
+</configuration>

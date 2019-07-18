@@ -1,0 +1,61 @@
+server:
+  port: ${SERVER_PORT:10080}
+logging:
+  logdir: /logs/person
+  console-level: trace
+  file-level: trace
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS}[%5p] --- [%-24t] [%-50C{50}][%-6L]: %m%n"
+  level:
+    root: info
+    person.pluto: ${LOG_LEVEL:trace}
+spring:
+  application:
+    name: natcross-boot
+  autoconfigure:
+    exclude: 
+      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+  devtools:
+    livereload:
+      enabled: false
+    restart:
+      enabled: ${RESTART_ENABLED:true}
+  jackson:
+    default-property-inclusion: NON_NULL
+  datasource:
+    dynamic:
+      druid:
+        initial-size: 0
+        max-active: 20
+        min-idle: 0
+        max-wait: 60000
+        time-between-eviction-runsMillis: 60000
+        min-evictable-idle-time-millis: 300000
+        test-while-idle: true
+        test-on-borrow: false
+        test-on-return: false
+        pool-prepared-statements: false
+        filters: stat
+      datasource:
+        master:
+          type: com.alibaba.druid.pool.DruidDataSource
+          driver-class-name: org.sqlite.JDBC
+          url: jdbc:sqlite:/G:/database/natcross.db3
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*Mapper.xml
+  type-aliases-package: person.pluto.system.entity
+  global-config:
+    db-config:
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+
+common:
+  constants:
+    MOUDLE_NAME: ${MOUDLE_NAME:${spring.application.name}}
+    LOCAL_ADDRESS: ${LOCAL_ADDRESS:http://129.28.193.163:10080}
