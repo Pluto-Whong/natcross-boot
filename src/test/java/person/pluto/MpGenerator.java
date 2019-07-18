@@ -121,7 +121,7 @@ public class MpGenerator {
         mapperTemplate = "template/mapper.java";
         serviceTemplate = "template/service.java";
         serviceImplTemplate = "template/serviceImpl.java";
-        controllerTemplate = "template/controller.java";
+//        controllerTemplate = "template/controller.java";
 
         templateConfig.setEntity(entityTemplate);
         templateConfig.setMapper(mapperTemplate);
@@ -162,7 +162,7 @@ public class MpGenerator {
         strategyConfig.setEntityLombokModel(true);
 
 //        strategyConfig.setSuperControllerClass("person.demo.controller");
-        strategyConfig.setRestControllerStyle(true);
+        strategyConfig.setRestControllerStyle(false);
         strategyConfig.setControllerMappingHyphenStyle(false);
 
         strategyConfig.setTablePrefix("t_");

@@ -1,20 +1,17 @@
 package person.pluto.system.controller;
 
-
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import org.springframework.web.bind.annotation.RestController;
-
-/**
- * <p>
- *  前端控制器
- * </p>
- *
- * @author Pluto
- * @since 2019-07-18 17:13:41
- */
-@RestController
-@RequestMapping("/system/user")
+@Controller
+@RequestMapping("/user")
 public class UserController {
+
+    @RequestMapping("/userList")
+    @RequiresPermissions("user:view") // 权限管理;
+    public String userList() {
+        return "/user/userList";
+    }
 
 }
