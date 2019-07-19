@@ -23,6 +23,11 @@
 
 	<dependencies>
 		<!-- TOOLS ... -->
+		<dependency>
+			<groupId>person.pluto</groupId>
+			<artifactId>natcross</artifactId>
+			<version>1.0</version>
+		</dependency>
 		<!-- TOOLS ! -->
 
 		<!-- base tools ... -->
@@ -212,7 +217,6 @@
 
 	<repositories>
 		<repository>
-			<!-- Maven 自带的中央仓库使用的Id为central 如果其他的仓库声明也是用该Id 就会覆盖中央仓库的配置 -->
 			<id>nexus-aliyun</id>
 			<name>Nexus aliyun</name>
 			<url>http://maven.aliyun.com/nexus/content/groups/public</url>

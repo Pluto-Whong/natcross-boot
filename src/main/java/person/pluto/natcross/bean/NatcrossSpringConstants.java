@@ -29,4 +29,14 @@ public class NatcrossSpringConstants {
         log.trace("CLIENT_SERVER_PORT[{}]", NatcrossConstants.CLIENT_SERVER_PORT);
     }
 
+    public static void setCLIENT_HEART_INTERVAL(Long cLIENT_HEART_INTERVAL) {
+        NatcrossConstants.CLIENT_HEART_INTERVAL = cLIENT_HEART_INTERVAL;
+        log.trace("CLIENT_HEART_INTERVAL[{}]", NatcrossConstants.CLIENT_HEART_INTERVAL);
+    }
+
+    public static void setTRY_RECLIENT_COUNT(Integer tRY_RECLIENT_COUNT) {
+        NatcrossConstants.TRY_RECLIENT_COUNT = tRY_RECLIENT_COUNT;
+        log.trace("TRY_RECLIENT_COUNT[{}]", NatcrossConstants.TRY_RECLIENT_COUNT);
+    }
+
 }

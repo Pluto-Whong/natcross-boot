@@ -6,9 +6,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import person.pluto.system.jpaservice.IJpaLoginService;
 import person.pluto.system.model.LoginResult;
+import person.pluto.system.model.enumeration.ResultEnum;
 
 @Controller
 public class HomeController {
@@ -44,9 +46,27 @@ public class HomeController {
         }
     }
 
+    @PostMapping(value = "/loginForJson")
+    @ResponseBody
+    public Object loginForJson(String userName, String password) {
+        LoginResult loginResult = loginService.login(userName, password);
+        if (loginResult.isLogin()) {
+            return ResultEnum.SUCCESS.toResultModel();
+        } else {
+            return ResultEnum.LOGIN_EXCEPTION.toResultModel().setData(loginResult.getResult());
+        }
+    }
+
     @RequestMapping("/logout")
     public String logOut() {
         loginService.logout();
         return "/user/login";
+    }
+
+    @RequestMapping("/logoutForJson")
+    @ResponseBody
+    public Object logoutForJson() {
+        loginService.logout();
+        return ResultEnum.SUCCESS.toResultModel();
     }
 }

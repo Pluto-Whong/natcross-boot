@@ -54,7 +54,7 @@ public class SignTools {
      */
     public static boolean isSignatureValid(final Map<String, String> data, String signKey, Long maxDiffTime,
             Object fileObject) {
-        return isSignatureValid(data, signKey, maxDiffTime, Arrays.asList(fileObject));
+        return isSignatureValid(data, signKey, maxDiffTime, fileObject == null ? null : Arrays.asList(fileObject));
     }
 
     /**

@@ -2,6 +2,7 @@ package person.pluto.system.model;
 
 import com.alibaba.fastjson.JSON;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import person.pluto.system.model.enumeration.ResultEnum;
 
@@ -17,6 +18,7 @@ import java.lang.reflect.Field;
  */
 @Data
 @Slf4j
+@Accessors(chain = true)
 public class ResultModel {
 
     public static ResultModel of(String retCode, String retMsg, Object object) {

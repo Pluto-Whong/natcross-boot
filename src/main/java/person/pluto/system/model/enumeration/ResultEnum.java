@@ -2,6 +2,8 @@ package person.pluto.system.model.enumeration;
 
 import org.apache.commons.lang3.StringUtils;
 
+import person.pluto.system.model.ResultModel;
+
 /**
  * <p>
  * 前后端返回码
@@ -39,6 +41,10 @@ public enum ResultEnum {
     CHARGE_RECORD_UPDATE_FAIL("2201", "充值记录早已被更改"),
     // 充值记录更新失败
     CHARGE_ACCOUNT_ADD_FAIL("2202", "账户余额增加失败"),
+
+    // 3___natcross系列
+    //
+    CREATE_NEW_LISTEN_FAIL("3001", "创建监听服务失败"),
 
     // 8___检查系别
     // 密码不符合设定
@@ -83,7 +89,7 @@ public enum ResultEnum {
     TOKEN_EXCEPTION("9899", "token解析异常"),
 
     // 数据操作异常
-    DATA_OPR_FAIL("9998","数据操作异常"),
+    DATA_OPR_FAIL("9998", "数据操作异常"),
     // 未知错误
     FAIL("9999", "未知错误");
 
@@ -105,6 +111,10 @@ public enum ResultEnum {
             }
         }
         return null;
+    }
+
+    public ResultModel toResultModel() {
+        return ResultModel.of(this);
     }
 
     public String getCode() {

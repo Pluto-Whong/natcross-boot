@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,14 +23,14 @@ public class UserController {
     private IUserService userService;
 
     @RequestMapping("/ulist")
-//    @RequiresPermissions("user:view") // 权限管理;
+    @RequiresPermissions("user:view") // 权限管理;
     public String ulist() {
         return "/user/userList";
     }
 
     @RequestMapping("getUserList")
     @ResponseBody
-    public Object getUserList(Page<User> page, User user,Map<String ,Object> map) {
+    public Object getUserList(Page<User> page, User user, Map<String, Object> map) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(user);
         IPage<User> page2 = userService.page(page, queryWrapper);
