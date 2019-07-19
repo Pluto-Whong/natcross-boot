@@ -69,3 +69,10 @@ common:
   constants:
     MOUDLE_NAME: ${MOUDLE_NAME:${spring.application.name}}
     LOCAL_ADDRESS: ${LOCAL_ADDRESS:http://129.28.193.163:10080}
+    
+natcross:
+  constants:
+    STREAM_CACHE_SIZE: 4096
+    CLIENT_SERVER_PORT: 10010
+    CLIENT_HEART_INTERVAL: 10000
+    TRY_RECLIENT_COUNT: 10
