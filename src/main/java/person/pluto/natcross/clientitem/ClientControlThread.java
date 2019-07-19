@@ -15,12 +15,12 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import person.pluto.natcross.common.IBelongControl;
 import person.pluto.natcross.common.InteractiveUtil;
-import person.pluto.natcross.model.ClientControlModel;
-import person.pluto.natcross.model.ClientWaitModel;
 import person.pluto.natcross.model.InteractiveModel;
-import person.pluto.natcross.model.InteractiveTypeEnum;
-import person.pluto.natcross.model.ResultEnum;
-import person.pluto.natcross.model.ResultModel;
+import person.pluto.natcross.model.NatcrossResultModel;
+import person.pluto.natcross.model.enumeration.InteractiveTypeEnum;
+import person.pluto.natcross.model.enumeration.NatcrossResultEnum;
+import person.pluto.natcross.model.interactive.ClientControlModel;
+import person.pluto.natcross.model.interactive.ClientWaitModel;
 import person.pluto.natcross.serveritem.SocketPart;
 
 /**
@@ -57,6 +57,15 @@ public class ClientControlThread extends Thread implements IBelongControl {
         this.setDestPort(destPort);
     }
 
+    /**
+     * 触发控制服务
+     *
+     * @author Pluto
+     * @since 2019-07-18 19:02:15
+     * @return
+     * @throws UnknownHostException
+     * @throws IOException
+     */
     public boolean createControl() throws UnknownHostException, IOException {
         this.client = new Socket(this.clientServiceIp, this.clientServicePort);
         this.outputStream = client.getOutputStream();
@@ -69,9 +78,9 @@ public class ClientControlThread extends Thread implements IBelongControl {
         InteractiveModel recv = InteractiveUtil.recv(inputStream);
         log.info(recv.toJSONString());
 
-        ResultModel javaObject = recv.getData().toJavaObject(ResultModel.class);
+        NatcrossResultModel javaObject = recv.getData().toJavaObject(NatcrossResultModel.class);
 
-        if (StringUtils.equals(ResultEnum.SUCCESS.getCode(), javaObject.getRetCod())) {
+        if (StringUtils.equals(NatcrossResultEnum.SUCCESS.getCode(), javaObject.getRetCod())) {
             this.start();
             return true;
         }
@@ -133,9 +142,9 @@ public class ClientControlThread extends Thread implements IBelongControl {
             InteractiveModel recv = InteractiveUtil.recv(inputStream2);
             log.info(recv.toJSONString());
 
-            ResultModel javaObject = recv.getData().toJavaObject(ResultModel.class);
+            NatcrossResultModel javaObject = recv.getData().toJavaObject(NatcrossResultModel.class);
 
-            if (!StringUtils.equals(ResultEnum.SUCCESS.getCode(), javaObject.getRetCod())) {
+            if (!StringUtils.equals(NatcrossResultEnum.SUCCESS.getCode(), javaObject.getRetCod())) {
                 throw new RuntimeException("绑定失败");
             }
 

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import person.pluto.natcross.common.IBelongControl;
 import person.pluto.natcross.common.InputToOutputThread;
 
@@ -19,6 +20,7 @@ import person.pluto.natcross.common.InputToOutputThread;
  * @since 2019-07-12 08:36:30
  */
 @Data
+@Slf4j
 public class SocketPart implements IBelongControl {
 
     private String socketPartKey;
@@ -58,7 +60,7 @@ public class SocketPart implements IBelongControl {
             try {
                 listenSocket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.debug("socketPart [{}] 监听端口 关闭异常", socketPartKey);
             }
             listenSocket = null;
         }
@@ -67,7 +69,7 @@ public class SocketPart implements IBelongControl {
             try {
                 sendSocket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.debug("socketPart [{}] 发送端口 关闭异常", socketPartKey);
             }
             sendSocket = null;
         }
@@ -104,12 +106,15 @@ public class SocketPart implements IBelongControl {
             serverToClientThread.start();
             clientToServerThread.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("socketPart [" + this.socketPartKey + "] 隧道建立异常", e);
             return false;
         }
         return true;
     }
 
+    /**
+     * 上次接收到关闭要求
+     */
     @Override
     public void noticeStop() {
         this.stop();

@@ -1,39 +1,49 @@
-package person.pluto.natcross.model;
+package person.pluto.natcross.model.enumeration;
 
 import org.apache.commons.lang3.StringUtils;
 
+import person.pluto.natcross.model.NatcrossResultModel;
+
 /**
  * <p>
- * 前后端返回码
+ * 客户端服务端返回码
  * </p>
  *
  * @author wangmin1994@qq.com
  * @since 2019-03-28 10:59:53
  */
-public enum ResultEnum {
+public enum NatcrossResultEnum {
     // 成功
     SUCCESS("1000", "成功"),
+    //
+    UNKNOW_INTERACTIVE_TYPE("3001", "未知的通信类型"),
+    //
+    NO_HAS_SERVER_LISTEN("3002", "不存在请求的监听接口"),
     // 未知错误
     FAIL("9999", "未知错误");
 
     private String code;
     private String name;
 
-    ResultEnum(String code, String name) {
+    private NatcrossResultEnum(String code, String name) {
         this.code = code;
         this.name = name;
     }
 
-    public static ResultEnum getEnumByCode(String code) {
+    public static NatcrossResultEnum getEnumByCode(String code) {
         if (StringUtils.isBlank(code)) {
             return null;
         }
-        for (ResultEnum e : ResultEnum.values()) {
+        for (NatcrossResultEnum e : NatcrossResultEnum.values()) {
             if (StringUtils.equals(code, e.code)) {
                 return e;
             }
         }
         return null;
+    }
+
+    public NatcrossResultModel toResultModel() {
+        return NatcrossResultModel.of(this);
     }
 
     public String getCode() {

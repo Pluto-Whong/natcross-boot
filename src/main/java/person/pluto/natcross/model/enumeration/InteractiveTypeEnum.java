@@ -1,4 +1,4 @@
-package person.pluto.natcross.model;
+package person.pluto.natcross.model.enumeration;
 
 import org.apache.commons.lang3.StringUtils;
 

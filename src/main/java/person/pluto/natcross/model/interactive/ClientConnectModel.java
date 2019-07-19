@@ -1,4 +1,4 @@
-package person.pluto.natcross.model;
+package person.pluto.natcross.model.interactive;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

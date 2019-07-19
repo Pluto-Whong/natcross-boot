@@ -1,8 +1,11 @@
 package person.pluto.system.frameword;
 
 import lombok.extern.slf4j.Slf4j;
+import person.pluto.natcross.serveritem.ClientServiceThread;
+import person.pluto.natcross.serveritem.ListenServerControl;
 
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,9 +20,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class DestroyMainDisposable implements DisposableBean {
 
+    @Autowired
+    private ClientServiceThread clientServiceThread;
+
     @Override
     public void destroy() {
         log.debug("DestroyMainDisposable destroy");
+
+        clientServiceThread.cancell();
+        ListenServerControl.closeAll();
+
     }
 
 }
