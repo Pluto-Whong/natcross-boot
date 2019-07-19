@@ -20,29 +20,29 @@ public class HomeController {
 
     @RequestMapping({ "/", "/index" })
     public String index() {
-        return "/index";
+        return "index";
     }
 
     @RequestMapping("/403")
     public String unauthorizedRole() {
-        return "/403";
+        return "403";
     }
 
     @GetMapping(value = "/login")
     public String toLogin() {
         loginService.logout();
-        return "/login";
+        return "login";
     }
 
     @PostMapping(value = "/login")
     public String login(Model model, String userName, String password) {
         LoginResult loginResult = loginService.login(userName, password);
         if (loginResult.isLogin()) {
-            return "/index";
+            return "index";
         } else {
             model.addAttribute("msg", loginResult.getResult());
             model.addAttribute("userName", userName);
-            return "/login";
+            return "login";
         }
     }
 
@@ -60,7 +60,7 @@ public class HomeController {
     @RequestMapping("/logout")
     public String logOut() {
         loginService.logout();
-        return "/user/login";
+        return "user/login";
     }
 
     @RequestMapping("/logoutForJson")

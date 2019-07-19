@@ -25,7 +25,7 @@ public class UserController {
     @RequestMapping("/ulist")
     @RequiresPermissions("user:view") // 权限管理;
     public String ulist() {
-        return "/user/userList";
+        return "user/userList";
     }
 
     @RequestMapping("getUserList")

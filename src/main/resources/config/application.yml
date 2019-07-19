@@ -1,7 +1,7 @@
 server:
   port: ${SERVER_PORT:10080}
 logging:
-  logdir: /logs/person
+  logdir: ${LOG_DIR:/logs/person}
   console-level: debug
   file-level: trace
   pattern:
@@ -44,8 +44,8 @@ spring:
           username: ${DATA_USER:root}
           password: ${DATA_PASSWORD:root}
   jpa:
-    hibernate:
-      ddl-auto: update
+#    hibernate:
+#      ddl-auto: update
 #      naming:
 #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl #按字段名字建表
     show-sql: true
