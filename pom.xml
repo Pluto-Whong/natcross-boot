@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>person.pluto</groupId>
-	<artifactId>natcross-boot-sqlite</artifactId>
+	<artifactId>natcross-boot</artifactId>
 	<version>1.0</version>
-	<name>natcross-boot-sqlite</name>
+	<name>natcross-boot</name>
 	<description>内网穿透 spring boot 实现（包含http方式管理、sqlite做数据库）</description>
 
 	<properties>
