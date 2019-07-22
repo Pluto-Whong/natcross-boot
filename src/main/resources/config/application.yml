@@ -11,7 +11,7 @@ logging:
     person.pluto: ${LOG_LEVEL:trace}
 spring:
   application:
-    name: natcross-boot-sqlite
+    name: natcross-boot
   autoconfigure:
     exclude: 
       - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
@@ -40,7 +40,7 @@ spring:
         master:
           type: com.alibaba.druid.pool.DruidDataSource
           driver-class-name: org.sqlite.JDBC
-          url: jdbc:sqlite:G:/database/natcross.db3
+          url: jdbc:sqlite:${user.dir}/doc/natcross.db3
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -58,11 +58,9 @@ mybatis-plus:
 common:
   constants:
     MOUDLE_NAME: ${MOUDLE_NAME:${spring.application.name}}
-    LOCAL_ADDRESS: ${LOCAL_ADDRESS:http://129.28.193.163:10080}
+    LOCAL_ADDRESS: http://${LOCAL_ADDRESS:127.0.0.1}:${server.port}
     
 natcross:
   constants:
     STREAM_CACHE_SIZE: 4096
     CLIENT_SERVER_PORT: 10010
-    CLIENT_HEART_INTERVAL: 10000
-    TRY_RECLIENT_COUNT: 10
