@@ -1,8 +1,5 @@
 package person.pluto.system.controller;
 
-import java.util.Map;
-
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,18 +19,6 @@ public class DemoController {
 
     @RequestMapping("/index")
     public Object index() {
-        return ResultModel.ofSuccess();
-    }
-
-    @GetMapping("/getParam")
-    public ResultModel getParamForGet(String username) {
-        System.err.println("getParamForGet");
-        return ResultModel.ofSuccess(username);
-    }
-
-    @RequestMapping("/tencentYunSms")
-    public Object tencentYunSms(Map<String, String> param) {
-        System.err.println(param);
         return ResultModel.ofSuccess();
     }
 

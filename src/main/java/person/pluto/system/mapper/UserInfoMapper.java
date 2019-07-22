@@ -1,6 +1,6 @@
 package person.pluto.system.mapper;
 
-import person.pluto.system.entity.SysRole;
+import person.pluto.system.entity.UserInfo;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,9 +12,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author Pluto
- * @since 2019-07-18 17:13:41
+ * @since 2019-07-22 11:57:50
  */
 @Mapper
-public interface SysRoleMapper extends BaseMapper<SysRole> {
+public interface UserInfoMapper extends BaseMapper<UserInfo> {
 
 }

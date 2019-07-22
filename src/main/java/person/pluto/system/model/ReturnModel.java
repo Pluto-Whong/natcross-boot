@@ -24,6 +24,10 @@ public class ReturnModel {
         return new ReturnModel(success, data);
     }
 
+    public static ReturnModel ofSuccess() {
+        return new ReturnModel(true, null);
+    }
+
     public static ReturnModel ofSuccess(Object data) {
         return new ReturnModel(true, data);
     }

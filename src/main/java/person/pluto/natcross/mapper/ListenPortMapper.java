@@ -1,6 +1,6 @@
-package person.pluto.system.mapper;
+package person.pluto.natcross.mapper;
 
-import person.pluto.system.entity.User;
+import person.pluto.natcross.entity.ListenPort;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,9 +12,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author Pluto
- * @since 2019-07-18 17:13:41
+ * @since 2019-07-22 13:55:39
  */
 @Mapper
-public interface UserMapper extends BaseMapper<User> {
+public interface ListenPortMapper extends BaseMapper<ListenPort> {
 
 }

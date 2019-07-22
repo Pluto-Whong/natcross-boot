@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>person.pluto</groupId>
-	<artifactId>natcross-boot</artifactId>
+	<artifactId>natcross-boot-sqlite</artifactId>
 	<version>1.0</version>
-	<name>natcross-boot</name>
-	<description>内网穿透 spring boot 实现（包含http方式管理）</description>
+	<name>natcross-boot-sqlite</name>
+	<description>内网穿透 spring boot 实现（包含http方式管理、sqlite做数据库）</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -64,10 +64,6 @@
 			<version>1.4.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-java8time</artifactId>
 		</dependency>
@@ -104,6 +100,10 @@
 		<!-- thymeleaf ! -->
 
 		<!-- database for mybatis ... -->
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>

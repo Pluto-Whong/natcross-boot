@@ -1,8 +1,11 @@
 package person.pluto;
 
 import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
 
 import lombok.extern.slf4j.Slf4j;
+import person.pluto.system.frameword.CommonConstants;
 
 /**
  * <p>
@@ -17,10 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 public class TestMain {
 
     public static void main(String[] args) throws Exception {
-        Exception exception = new UnauthenticatedException();
-        if (exception instanceof UnauthenticatedException) {
-            System.err.println(123);
-        }
+        String string = new SimpleHash(CommonConstants.SHIRO_ALGORITHM_NAME, "admin",
+                ByteSource.Util.bytes("8d78869f470951332959580424d4bf4f"), CommonConstants.SHIRO_HASH_ITERATIONS)
+                        .toHex();
+        System.err.println(string);
     }
 
 }

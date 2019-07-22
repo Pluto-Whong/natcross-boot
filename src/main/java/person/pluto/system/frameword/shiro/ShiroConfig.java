@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
+import person.pluto.system.frameword.CommonConstants;
+
 @Configuration
 public class ShiroConfig {
     @Bean
@@ -53,8 +55,8 @@ public class ShiroConfig {
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
-        hashedCredentialsMatcher.setHashAlgorithmName("md5");// 散列算法:这里使用MD5算法;
-        hashedCredentialsMatcher.setHashIterations(2);// 散列的次数，比如散列两次，相当于 md5(md5(""));
+        hashedCredentialsMatcher.setHashAlgorithmName(CommonConstants.SHIRO_ALGORITHM_NAME);
+        hashedCredentialsMatcher.setHashIterations(CommonConstants.SHIRO_HASH_ITERATIONS);
         return hashedCredentialsMatcher;
     }
 
@@ -87,14 +89,14 @@ public class ShiroConfig {
 
     @Bean(name = "simpleMappingExceptionResolver")
     public SimpleMappingExceptionResolver createSimpleMappingExceptionResolver() {
-        SimpleMappingExceptionResolver r = new SimpleMappingExceptionResolver();
+        SimpleMappingExceptionResolver resolver = new SimpleMappingExceptionResolver();
         Properties mappings = new Properties();
         mappings.setProperty("DatabaseException", "databaseError");// 数据库异常处理
         mappings.setProperty("UnauthorizedException", "/403");
-        r.setExceptionMappings(mappings); // None by default
-        r.setDefaultErrorView("error"); // No default
-        r.setExceptionAttribute("exception"); // Default is "exception"
+        resolver.setExceptionMappings(mappings); // None by default
+        resolver.setDefaultErrorView("error"); // No default
+        resolver.setExceptionAttribute("exception"); // Default is "exception"
         // r.setWarnLogCategory("example.MvcLogger"); // No default
-        return r;
+        return resolver;
     }
 }

@@ -45,6 +45,14 @@ public enum ResultEnum {
     // 3___natcross系列
     //
     CREATE_NEW_LISTEN_FAIL("3001", "创建监听服务失败"),
+    //
+    UPDATE_LISTEN_FAIL("3002", "更新创建监听服务失败"),
+    //
+    LISTEN_PORT_HAS("3003", "端口已存在"),
+    //
+    SAVE_NEW_LISTEN_FAIL("3004", "保存监听服务信息"),
+    //
+    LISTEN_PORT_NO_HAS("3005", "端口不存在"),
 
     // 8___检查系别
     // 密码不符合设定

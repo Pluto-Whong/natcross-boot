@@ -8,15 +8,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import person.pluto.system.jpaservice.IJpaLoginService;
-import person.pluto.system.model.LoginResult;
+import person.pluto.system.model.ReturnModel;
 import person.pluto.system.model.enumeration.ResultEnum;
+import person.pluto.system.server.LoginServer;
 
 @Controller
 public class HomeController {
 
     @Autowired
-    private IJpaLoginService loginService;
+    private LoginServer loginServer;
 
     @RequestMapping({ "/", "/index" })
     public String index() {
@@ -30,17 +30,17 @@ public class HomeController {
 
     @GetMapping(value = "/login")
     public String toLogin() {
-        loginService.logout();
+        loginServer.logout();
         return "login";
     }
 
     @PostMapping(value = "/login")
     public String login(Model model, String userName, String password) {
-        LoginResult loginResult = loginService.login(userName, password);
-        if (loginResult.isLogin()) {
+        ReturnModel loginResult = loginServer.login(userName, password);
+        if (loginResult.isSuccess()) {
             return "index";
         } else {
-            model.addAttribute("msg", loginResult.getResult());
+            model.addAttribute("msg", loginResult.getData());
             model.addAttribute("userName", userName);
             return "login";
         }
@@ -49,24 +49,24 @@ public class HomeController {
     @PostMapping(value = "/loginForJson")
     @ResponseBody
     public Object loginForJson(String userName, String password) {
-        LoginResult loginResult = loginService.login(userName, password);
-        if (loginResult.isLogin()) {
+        ReturnModel loginResult = loginServer.login(userName, password);
+        if (loginResult.isSuccess()) {
             return ResultEnum.SUCCESS.toResultModel();
         } else {
-            return ResultEnum.LOGIN_EXCEPTION.toResultModel().setData(loginResult.getResult());
+            return ResultEnum.LOGIN_EXCEPTION.toResultModel().setData(loginResult.getData());
         }
     }
 
     @RequestMapping("/logout")
     public String logOut() {
-        loginService.logout();
+        loginServer.logout();
         return "user/login";
     }
 
     @RequestMapping("/logoutForJson")
     @ResponseBody
     public Object logoutForJson() {
-        loginService.logout();
+        loginServer.logout();
         return ResultEnum.SUCCESS.toResultModel();
     }
 }

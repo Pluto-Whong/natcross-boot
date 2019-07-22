@@ -1,6 +1,6 @@
 package person.pluto.system.service;
 
-import person.pluto.system.entity.SysRolePermission;
+import person.pluto.system.entity.UserInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,9 +9,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author Pluto
- * @since 2019-07-18 17:13:41
+ * @since 2019-07-22 11:57:50
  */
-public interface ISysRolePermissionService extends IService<SysRolePermission> {
+public interface IUserInfoService extends IService<UserInfo> {
 
 
 }

@@ -1,6 +1,9 @@
 package person.pluto.system.common;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
+
+import person.pluto.system.frameword.CommonConstants;
 
 /**
  * <p>
@@ -13,7 +16,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 public final class SystemTools {
 
     /**
-     * 获取加密后的密码
+     * 获取加密后的密码(shiro)
      *
      * @author wangmin1994@qq.com
      * @since 2019-05-10 13:36:19
@@ -22,9 +25,8 @@ public final class SystemTools {
      * @return
      */
     public static String getEncryPassword(String password, String passwordSalt) {
-        password = password == null ? "" : password;
-        passwordSalt = passwordSalt == null ? "" : passwordSalt;
-        return DigestUtils.md5Hex(password + passwordSalt);
+        return new SimpleHash(CommonConstants.SHIRO_ALGORITHM_NAME, password, ByteSource.Util.bytes(passwordSalt),
+                CommonConstants.SHIRO_HASH_ITERATIONS).toHex();
     }
 
 }
