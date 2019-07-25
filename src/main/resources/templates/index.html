@@ -52,9 +52,92 @@
 <script th:src="@{/js/tableExport.min.js}"></script>
 <script th:src="@{/js/FileSaver.min.js}"></script>
 <script th:src="@{/js/xlsx.core.min.js}"></script>
+
+<script>
+	$(function() {
+		$.extend($.fn.validatebox.defaults.rules, {
+			/*必须和某个字段相等*/
+			equalTo : {
+				validator : function(value, param) {
+					return $(param[0]).val() == value;
+				},
+				message : '两次密码不相同'
+			}
+
+		});
+	});
+
+	function indexEditPassword() {
+		$("#index-editpasswordDialog-form").form('clear');
+		$('#index-editpasswordDialog')
+				.dialog(
+						{
+							buttons : [ {
+								text : '提交',
+								handler : function() {
+									$("#index-editpasswordDialog-form")
+											.form(
+													'submit',
+													{
+														url : '/editPassword',
+														onSubmit : function() {
+															//表单验证
+															return $(
+																	"#index-editpasswordDialog-form")
+																	.form(
+																			'validate')
+														},
+														success : function(
+																result) {
+															var result = JSON
+																	.parse(result);
+															if (result.retCod != '1000') {
+																$.messager
+																		.alert(
+																				'错误',
+																				result.retMsg,
+																				'error');
+																return;
+															}
+															$(
+																	'#index-editpasswordDialog')
+																	.dialog(
+																			'close');
+														}
+													});
+								}
+							} ]
+						});
+		$('#index-editpasswordDialog').dialog('open');
+	}
+</script>
+
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
+	<div id="index-editpasswordDialog" class="easyui-dialog" title="修改密码"
+		data-options="iconCls:'icon-edit',resizable:true,modal:true,closed:true,cache:false">
+		<form id="index-editpasswordDialog-form" method="post">
+			<table
+				style="margin: 10px; border-collapse: separate; border-spacing: 5px 5px;">
+				<tr>
+					<td style="text-align: right;">原密码：</td>
+					<td><input name="oldPassword" class="easyui-passwordbox"
+						data-options="required:true,showEye:true" style="width: 200px"></td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">新密码：</td>
+					<td><input id="index-editpasswordDialog-form-password" name="newPassword" class="easyui-passwordbox"
+						data-options="required:true,showEye:true" style="width: 200px"></td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">确认密码：</td>
+					<td><input class="easyui-passwordbox"
+						data-options="required:true,showEye:true" validType="equalTo['#index-editpasswordDialog-form-password']" style="width: 200px"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
 	<div class="wrapper">
 
 		<!-- Main Header -->
@@ -93,9 +176,12 @@
 									</p></li>
 								<!-- Menu Footer-->
 								<li class="user-footer">
+									<div class="pull-left">
+										<a class="btn btn-default btn-flat"
+											onclick="indexEditPassword();">修改密码</a>
+									</div>
 									<div class="pull-right">
-										<a th:href="@{/logout}" class="btn btn-default btn-flat">登
-											出</a>
+										<a th:href="@{/logout}" class="btn btn-default btn-flat">登出</a>
 									</div>
 								</li>
 							</ul>
@@ -186,7 +272,6 @@
 			});
 
 			$('.myLeftMenu').click(function(e) {
-				//            var url = $(this).attr('data');
 				e.preventDefault();
 				var url = $(this).attr('href');
 				console.log(url);

@@ -10,16 +10,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import person.pluto.system.common.SystemTools;
 import person.pluto.system.entity.UserInfo;
+import person.pluto.system.model.ResultModel;
 import person.pluto.system.model.ReturnModel;
 import person.pluto.system.model.enumeration.ResultEnum;
 import person.pluto.system.server.LoginServer;
+import person.pluto.system.service.IUserInfoService;
+import person.pluto.system.tools.ValidatorUtils;
 
 @Controller
 public class HomeController {
 
     @Autowired
     private LoginServer loginServer;
+
+    @Autowired
+    private IUserInfoService userInfoService;
 
     @RequestMapping({ "/", "/index" })
     public String index(Model model) {
@@ -74,6 +81,34 @@ public class HomeController {
     @ResponseBody
     public Object logoutForJson() {
         loginServer.logout();
+        return ResultEnum.SUCCESS.toResultModel();
+    }
+
+    @RequestMapping("/editPassword")
+    @ResponseBody
+    public ResultModel editPassword(String oldPassword, String newPassword) {
+
+        if (!ValidatorUtils.isUserPwd(newPassword)) {
+            return ResultEnum.PASSWORD_ILLEGAL.toResultModel();
+        }
+
+        Subject subject = SecurityUtils.getSubject();
+        UserInfo userInfo = (UserInfo) subject.getPrincipal();
+
+        if (!SystemTools.checkPassword(userInfo, oldPassword)) {
+            return ResultEnum.LOGIN_PASSWORD_INVALID.toResultModel();
+        }
+
+        UserInfo updateUserInfo = new UserInfo();
+        updateUserInfo.setId(userInfo.getId());
+        updateUserInfo.setPassword(newPassword);
+        SystemTools.createPasswordAndSalt(updateUserInfo);
+
+        boolean updateById = userInfoService.updateById(updateUserInfo);
+        if (!updateById) {
+            return ResultEnum.DATA_OPR_FAIL.toResultModel();
+        }
+
         return ResultEnum.SUCCESS.toResultModel();
     }
 }
