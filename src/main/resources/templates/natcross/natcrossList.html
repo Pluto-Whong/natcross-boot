@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>内网穿透列表</title>
+
+<script th:src="@{/easyui/jquery.easyui.min.js}"></script>
+
+<script th:inline="javascript">
+	var selectIndex = -1;
+	$('#natcrossListDataGrid')
+			.datagrid(
+					{
+						url : "/natcross/getAllListenServer",
+						idField : 'listenPort',
+						toolbar : '#natcrossListToolbar',
+						rownumbers : true,
+						fitColumns : true,
+						resizeHandle : 'right',
+						striped : true,
+						singleSelect : true,
+						remoteSort : false,
+						multiSort : false,
+						sortName : "listenPort",
+						sortOrder : "asc",
+						columns : [ [ {
+							title : '端口',
+							field : 'listenPort',
+							align : 'center',
+							sortable : true
+						}, {
+							title : '接口描述',
+							field : 'portDescribe',
+							formatter : function(value, row, index) {
+								return value == null ? "-" : value;
+							}
+						}, {
+							title : '目标IP',
+							field : 'destIp',
+							align : 'center',
+							formatter : function(value, row, index) {
+								return value == null ? "-" : value;
+							}
+						}, {
+							title : '目标端口',
+							field : 'destPort',
+							align : 'center',
+							formatter : function(value, row, index) {
+								return value == null ? "-" : value;
+							}
+						}, {
+							title : '自启',
+							field : 'onStart',
+							sortable : true,
+							align : 'center',
+							sorter : function(a, b) {
+								if (a == null || a < b) {
+									return -1;
+								}
+								if (b == null || a > b) {
+									return 1;
+								}
+								return 0;
+							},
+							formatter : function(value, row, index) {
+								return value == null ? "-" : value;
+							}
+						}, {
+							title : '监听状态',
+							field : 'listenStatus'
+						}, {
+							title : '连接数',
+							field : 'serverListenThread',
+							align : 'center',
+							formatter : function(value, row, index) {
+								if (value == null) {
+									return '-';
+								}
+								return value.socketPartList.length;
+							}
+						} ] ],
+						loadFilter : function(data) {
+							if (data && data.retCod == '1000') {
+								var redata = [];
+								redata = redata
+										.concat(data.data.listenPortList);
+								redata = redata
+										.concat(data.data.independentList);
+								return redata;
+							}
+							return data;
+
+						},
+						onClickRow : function(rowIndex, rowData) {
+							if ($('#natcrossListDataGrid').datagrid('options').singleSelect) {
+								if (rowIndex == selectIndex) {
+									$('#natcrossListDataGrid').datagrid(
+											'unselectRow', rowIndex);
+									selectIndex = -1;
+								} else {
+									selectIndex = rowIndex;
+								}
+							}
+						}
+					});
+
+	function natcrossListRefresh() {
+		$('#natcrossListDataGrid').datagrid('reload');
+	}
+
+	function createListenPort() {
+		$("#natcrossList-ListenPortPanel-form").form('clear');
+		$("#natcrossList-panel-onStart").checkbox('check');
+		$('#natcrossList-ListenPortPanel')
+				.dialog(
+						{
+							buttons : [ {
+								text : '提交',
+								handler : function() {
+									$("#natcrossList-ListenPortPanel-form")
+											.form(
+													'submit',
+													{
+														url : '/natcross/createListenPort',
+														onSubmit : function() {
+															//表单验证
+															return $(
+																	"#natcrossList-ListenPortPanel-form")
+																	.form(
+																			'validate')
+														},
+														success : function(
+																result) {
+															var result = JSON
+																	.parse(result);
+															if (result.retCod != '1000') {
+																$.messager
+																		.alert(
+																				'错误',
+																				result.retMsg,
+																				'error');
+																return;
+															}
+															$(
+																	'#natcrossListDataGrid')
+																	.datagrid(
+																			'reload');
+															$(
+																	'#natcrossList-ListenPortPanel')
+																	.dialog(
+																			'close');
+														}
+													});
+								}
+							} ]
+						});
+		$('#natcrossList-ListenPortPanel').dialog('open');
+	}
+
+	function updateListenPort() {
+		var _select = $('#natcrossListDataGrid').datagrid('getSelected');
+		if (!_select) {
+			$.messager.alert('警告', '请选择要操作的行！', 'warning');
+			return;
+		}
+
+		$("#natcrossList-ListenPortPanel-form").form('clear');
+
+		$("#natcrossList-panel-listenPort").numberbox({
+			'value' : _select.listenPort,
+			'editable' : false
+		});
+
+		$("#natcrossList-panel-portDescribe").textbox('setValue',
+				_select.portDescribe);
+		$("#natcrossList-panel-destIp").textbox('setValue', _select.destIp);
+		$("#natcrossList-panel-destPort").numberbox('setValue',
+				_select.destPort);
+
+		$("#natcrossList-panel-onStart").checkbox({
+			checked : _select.onStart
+		});
+
+		$('#natcrossList-ListenPortPanel')
+				.dialog(
+						{
+							buttons : [ {
+								text : '提交',
+								handler : function() {
+									$("#natcrossList-ListenPortPanel-form")
+											.form(
+													'submit',
+													{
+														url : '/natcross/updateListenPort',
+														onSubmit : function() {
+															//表单验证
+															return $(
+																	"#natcrossList-ListenPortPanel-form")
+																	.form(
+																			'validate')
+														},
+														success : function(
+																result) {
+															var result = JSON
+																	.parse(result);
+															if (result.retCod != '1000') {
+																$.messager
+																		.alert(
+																				'错误',
+																				result.retMsg,
+																				'error');
+																return;
+															}
+															$(
+																	'#natcrossListDataGrid')
+																	.datagrid(
+																			'reload');
+															$(
+																	'#natcrossList-ListenPortPanel')
+																	.dialog(
+																			'close');
+														}
+													});
+								}
+							} ]
+						});
+		$('#natcrossList-ListenPortPanel').dialog('open');
+	}
+
+	function createNewListen() {
+		var _select = $('#natcrossListDataGrid').datagrid('getSelected');
+		if (_select) {
+			$.post("/natcross/createNewListen", {
+				'listenPort' : _select.listenPort
+			}, function(result) {
+				if (result.retCod != '1000') {
+					$.messager.alert('错误', result.retMsg, 'error');
+				}
+				$('#natcrossListDataGrid').datagrid('reload');
+			});
+			return;
+		}
+
+		$.messager.prompt('启动新监听', '请输入要监听的端口：', function(listenPort) {
+			if (listenPort) {
+				$.post("/natcross/createNewListen", {
+					'listenPort' : listenPort
+				}, function(result) {
+					if (result.retCod != '1000') {
+						$.messager.alert('错误', result.retMsg, 'error');
+					}
+					$('#natcrossListDataGrid').datagrid('reload');
+				});
+			}
+		});
+	}
+
+	function stopListen() {
+		var _select = $('#natcrossListDataGrid').datagrid('getSelected');
+		if (!_select) {
+			$.messager.alert('警告', '请选择要操作的行！', 'warning');
+			return;
+		}
+		$.post("/natcross/stopListen", {
+			'listenPort' : _select.listenPort
+		}, function(result) {
+			if (result.retCod != '1000') {
+				$.messager.alert('错误', result.retMsg, 'error');
+			}
+
+			$('#natcrossListDataGrid').datagrid('reload');
+		});
+	}
+
+	function removeListen() {
+		var _select = $('#natcrossListDataGrid').datagrid('getSelected');
+		if (!_select) {
+			$.messager.alert('警告', '请选择要操作的行！', 'warning');
+			return;
+		}
+		$.post("/natcross/removeListen", {
+			'listenPort' : _select.listenPort
+		}, function(result) {
+			if (result.retCod != '1000') {
+				$.messager.alert('错误', result.retMsg, 'error');
+			}
+
+			$('#natcrossListDataGrid').datagrid('reload');
+		});
+	}
+</script>
+</head>
+<body>
+	<h2>内网穿透列表</h2>
+	<div id="natcrossList-ListenPortPanel" class="easyui-dialog"
+		title="保存新的监听"
+		data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true,cache:false">
+		<form id="natcrossList-ListenPortPanel-form" method="post">
+			<table
+				style="margin: 10px; border-collapse: separate; border-spacing: 5px 5px;">
+				<tr>
+					<td style="text-align: right;">端口：</td>
+					<td><input id="natcrossList-panel-listenPort"
+						name="listenPort" class="easyui-numberbox"
+						data-options="required:true" style="width: 100px"></td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">接口描述：</td>
+					<td><input id="natcrossList-panel-portDescribe"
+						name="portDescribe" class="easyui-textbox"
+						data-options="required:true" style="width: 100px"></td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">目标IP：</td>
+					<td><input id="natcrossList-panel-destIp" name="destIp"
+						class="easyui-textbox" data-options="required:true"
+						style="width: 100px"></td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">目标端口：</td>
+					<td><input id="natcrossList-panel-destPort" name="destPort"
+						class="easyui-numberbox" data-options="required:true"
+						style="width: 100px"></td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">自启：</td>
+					<td><input id="natcrossList-panel-onStart" name="onStart"
+						class="easyui-checkbox" data-options="value:'true',checked:true"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+
+	<div id="natcrossListToolbar" style="padding: 5px; height: auto">
+		<div style="margin-bottom: 5px">
+			<a href="#" class="easyui-linkbutton"
+				data-options="iconCls:'icon-search'"
+				onclick="natcrossListRefresh();">查询</a> <a href="#"
+				class="easyui-linkbutton" data-options="iconCls:'icon-save'"
+				onclick="createListenPort();">保存新的监听</a> <a href="#"
+				class="easyui-linkbutton" data-options="iconCls:'icon-edit'"
+				onclick="updateListenPort();">更新监听</a> <a href="#"
+				class="easyui-linkbutton" data-options="iconCls:'icon-add'"
+				onclick="createNewListen();">启动新的监听</a> <a href="#"
+				class="easyui-linkbutton" data-options="iconCls:'icon-no'"
+				onclick="stopListen();">停止某个端口</a> <a href="#"
+				class="easyui-linkbutton" data-options="iconCls:'icon-remove'"
+				onclick="removeListen();">移除某个监听</a>
+		</div>
+	</div>
+	<div class="container-fluid panel-body" style="padding-bottom: 0px">
+		<table id="natcrossListDataGrid"></table>
+	</div>
+
+</body>
+</html>

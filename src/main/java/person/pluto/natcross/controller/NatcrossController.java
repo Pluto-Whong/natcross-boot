@@ -46,7 +46,6 @@ public class NatcrossController {
         // 检查以前是否有设定保存
         QueryWrapper<ListenPort> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(ListenPort::getListenPort, listenPort.getListenPort());
-        listenPortService.getOne(queryWrapper);
         int count = listenPortService.count(queryWrapper);
         if (count > 0) {
             return ResultEnum.LISTEN_PORT_HAS.toResultModel();
@@ -61,7 +60,7 @@ public class NatcrossController {
         }
 
         // 如果指定不自启动，则直接返回，不启动端口
-        if (listenPort.getOnStart() != null && !listenPort.getOnStart()) {
+        if (listenPort.getOnStart() == null && !listenPort.getOnStart()) {
             return ResultEnum.SUCCESS.toResultModel();
         }
 
@@ -100,6 +99,10 @@ public class NatcrossController {
 
         listenPort.setGmtCreate(null);
         listenPort.setGmtModify(null);
+
+        if (listenPort.getOnStart() == null) {
+            listenPort.setOnStart(false);
+        }
 
         boolean save = listenPortService.updateById(listenPort);
         if (!save) {
@@ -178,11 +181,15 @@ public class NatcrossController {
         }
 
         List<ServerListenThread> serverListenList = ListenServerControl.getAll();
-        List<ServerListenThread> independentList = new LinkedList<>();
+        List<ListenPort> independentList = new LinkedList<>();
 
         for (ServerListenThread model : serverListenList) {
             if (!listenPortExist.contains(model.getListenPort())) {
-                independentList.add(model);
+                ListenPort listenPort = new ListenPort();
+                listenPort.setListenPort(model.getListenPort());
+                listenPort.setPortDescribe("临时端口");
+                listenPort.setServerListenThread(model);
+                independentList.add(listenPort);
             }
         }
 
