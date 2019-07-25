@@ -113,7 +113,13 @@
 
 	function createListenPort() {
 		$("#natcrossList-ListenPortPanel-form").form('clear');
+		
+		$("#natcrossList-panel-listenPort").numberbox({
+			'editable' : false
+		});
+		
 		$("#natcrossList-panel-onStart").checkbox('check');
+		
 		$('#natcrossList-ListenPortPanel')
 				.dialog(
 						{
