@@ -1,6 +1,7 @@
 package person.pluto.system.frameword;
 
 import lombok.extern.slf4j.Slf4j;
+import person.pluto.natcross.serveritem.ClearInvalidSocketPartThread;
 import person.pluto.natcross.serveritem.ClientServiceThread;
 import person.pluto.natcross.serveritem.ListenServerControl;
 
@@ -23,11 +24,15 @@ public class DestroyMainDisposable implements DisposableBean {
     @Autowired
     private ClientServiceThread clientServiceThread;
 
+    @Autowired
+    private ClearInvalidSocketPartThread clearInvalidSocketPartThread;
+
     @Override
     public void destroy() {
         log.debug("DestroyMainDisposable destroy");
 
         clientServiceThread.cancell();
+        clearInvalidSocketPartThread.cancell();
         ListenServerControl.closeAll();
 
     }

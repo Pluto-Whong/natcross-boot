@@ -29,4 +29,14 @@ public class NatcrossSpringConstants {
         log.trace("CLIENT_SERVER_PORT[{}]", NatcrossConstants.CLIENT_SERVER_PORT);
     }
 
+    public void setSOCKET_PART_INVAILD_MILLIS(Long sOCKET_PART_INVAILD_MILLIS) {
+        NatcrossConstants.SOCKET_PART_INVAILD_MILLIS = sOCKET_PART_INVAILD_MILLIS;
+        log.trace("SOCKET_PART_INVAILD_MILLIS[{}]", NatcrossConstants.SOCKET_PART_INVAILD_MILLIS);
+    }
+
+    public void setSOCKET_PART_CLEAR_INTERVAL_SECONDS(Long sOCKET_PART_CLEAR_INTERVAL_SECONDS) {
+        NatcrossConstants.SOCKET_PART_CLEAR_INTERVAL_SECONDS = sOCKET_PART_CLEAR_INTERVAL_SECONDS;
+        log.trace("SOCKET_PART_CLEAR_INTERVAL_SECONDS[{}]", NatcrossConstants.SOCKET_PART_CLEAR_INTERVAL_SECONDS);
+    }
+
 }
