@@ -104,6 +104,9 @@
 									selectIndex = rowIndex;
 								}
 							}
+						},
+						onDblClickRow : function(rowIndex, rowData) {
+							socketPartProccesFun(rowData);
 						}
 					});
 
@@ -113,13 +116,13 @@
 
 	function createListenPort() {
 		$("#natcrossList-ListenPortPanel-form").form('clear');
-		
+
 		$("#natcrossList-panel-listenPort").numberbox({
 			'editable' : true
 		});
-		
+
 		$("#natcrossList-panel-onStart").checkbox('check');
-		
+
 		$('#natcrossList-ListenPortPanel')
 				.dialog(
 						{
@@ -297,6 +300,115 @@
 			$('#natcrossListDataGrid').datagrid('reload');
 		});
 	}
+
+	function socketPartProccesFun(row) {
+		var objList = $("#natcrossList-SocketPartAccordion>div");
+
+		for (var index = objList.length - 1; index >= 0; index--) {
+			$('#natcrossList-SocketPartAccordion').accordion('remove', index);
+		}
+
+		if (!row.serverListenThread) {
+			socketPartAccordionShowFun({
+				title : '无数据',
+				tableId : 'no-data'
+			}, 1);
+			return;
+		}
+
+		var map = row.serverListenThread.socketPartMap;
+
+		for ( var key in map) {
+
+			var mapValue = map[key];
+
+			var socketPartEntity = {
+				title : key,
+				tableId : key,
+				fieldList : [ {
+					fieldName : "可用标识",
+					value : mapValue.valid
+				}, {
+					fieldName : "创建时间",
+					value : mapValue.createTime
+				}, {
+					fieldName : "监听端口",
+					value : mapValue.listenSocketString
+				}, {
+					fieldName : "发送端口",
+					value : mapValue.sendSocketString
+				}, {
+					fieldName : "监听服务可用",
+					value : mapValue.serverToClientThread,
+					formatter : function(data) {
+						if (!data) {
+							return false;
+						}
+						return data.alive;
+					}
+				}, {
+					fieldName : "发送服务可用",
+					value : mapValue.clientToServerThread,
+					formatter : function(data) {
+						if (!data) {
+							return false;
+						}
+						return data.alive;
+					}
+				} ]
+			};
+			socketPartAccordionShowFun(socketPartEntity, 1);
+		}
+
+	}
+
+	function socketPartAccordionShowFun(accordionEntity, tableCol) {
+		$('#natcrossList-SocketPartAccordion')
+				.accordion(
+						'add',
+						{
+							title : accordionEntity.title,
+							content : '<div style="padding:10px" ><table id="' + accordionEntity.tableId + '"></table></div>'
+						});
+
+		var table = $("#" + accordionEntity.tableId)[0];
+
+		var fieldList = accordionEntity.fieldList;
+		if (!fieldList) {
+			return;
+		}
+
+		for (var i = 0; i < fieldList.length; i++) {
+			var field = fieldList[i];
+			var value = field.value;
+			
+			var tr = null;
+			// 针对不同的页使用不同的列数进行展示，效果较好
+			if (i % tableCol == 0) {
+				tr = document.createElement('tr');
+				table.appendChild(tr);
+			} else {
+				tr = table.lastChild;
+			}
+
+			var th = document.createElement("th");
+			th.align = "right";
+			th.style = "padding-right:10px;";
+			th.innerHTML = field.fieldName;
+			tr.appendChild(th);
+
+			var td = document.createElement("td");
+
+			var formatter = field.formatter;
+			if (!formatter) {
+				formatter = function(data) {
+					return data;
+				}
+			}
+			td.innerHTML = formatter(value);
+			tr.appendChild(td);
+		}
+	}
 </script>
 </head>
 <body>
@@ -345,7 +457,7 @@
 			<a href="#" class="easyui-linkbutton"
 				data-options="iconCls:'icon-search'"
 				onclick="natcrossListRefresh();">查询</a> <a href="#"
-				class="easyui-linkbutton" data-options="iconCls:'icon-save'"
+				class="easyui-linkbutton" data-options="iconCls:'icon-save'" vi
 				onclick="createListenPort();">保存新的监听</a> <a href="#"
 				class="easyui-linkbutton" data-options="iconCls:'icon-edit'"
 				onclick="updateListenPort();">更新监听</a> <a href="#"
@@ -360,6 +472,10 @@
 	<div class="container-fluid panel-body" style="padding-bottom: 0px">
 		<table id="natcrossListDataGrid"></table>
 	</div>
+
+	<div id="natcrossList-SocketPartAccordion" class="easyui-accordion"
+		data-options="multiple:true"
+		style="width: 'auto'; min-width: 500px; min-height: 600px;"></div>
 
 </body>
 </html>
