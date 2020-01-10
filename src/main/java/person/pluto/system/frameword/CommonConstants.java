@@ -16,11 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "common.constants")
 public class CommonConstants {
-    // 实例模块名，主要在多实例时进行区分
-    public static String MOUDLE_NAME = null;
-    // 本项目的地址（域名）
-    public static String LOCAL_ADDRESS = null;
-
     /**
      * shiro 加密方式
      */
@@ -30,15 +25,14 @@ public class CommonConstants {
      */
     public static Integer SHIRO_HASH_ITERATIONS = 1;
 
-    public void setMOUDLE_NAME(String mOUDLE_NAME) {
-        MOUDLE_NAME = mOUDLE_NAME;
-        log.trace("MOUDLE_NAME[{}]", MOUDLE_NAME);
-    }
-
-    public void setLOCAL_ADDRESS(String lOCAL_ADDRESS) {
-        LOCAL_ADDRESS = lOCAL_ADDRESS;
-        log.trace("LOCAL_ADDRESS[{}]", LOCAL_ADDRESS);
-    }
+    /**
+     * 请求时的签名key
+     */
+    public static String SERVER_SIGN_KEY = "serverSignKey";
+    /**
+     * 签名最大差异时间（毫秒）
+     */
+    public static Long SIGN_MAX_DIFF_MILLIS = 10000L;
 
     public void setSHIRO_ALGORITHM_NAME(String sHIRO_ALGORITHM_NAME) {
         SHIRO_ALGORITHM_NAME = sHIRO_ALGORITHM_NAME;

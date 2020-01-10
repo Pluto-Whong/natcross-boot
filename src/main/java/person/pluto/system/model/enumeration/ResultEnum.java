@@ -54,6 +54,14 @@ public enum ResultEnum {
     //
     LISTEN_PORT_NO_HAS("3005", "端口不存在"),
 
+    // 6___签名问题
+    //
+    SIGN_OVER_TIME("6001", "请求超过最大差异"),
+    //
+    SIGN_ERROR("6002", "签名错误"),
+    //
+    SIGN_FILE_ERROR("6003", "验签时文件异常"),
+
     // 8___检查系别
     // 密码不符合设定
     PASSWORD_ILLEGAL("8001", "密码不合法"),

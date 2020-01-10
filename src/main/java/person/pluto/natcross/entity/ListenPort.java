@@ -9,11 +9,11 @@ import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import person.pluto.natcross.serveritem.ServerListenThread;
+import person.pluto.natcross2.serverside.listen.ServerListenThread;
 
 /**
  * <p>
- * 
+ * 监听模型
  * </p>
  *
  * @author Pluto

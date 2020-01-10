@@ -11,10 +11,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import person.pluto.natcross.entity.ListenPort;
-import person.pluto.natcross.serveritem.ClearInvalidSocketPartThread;
-import person.pluto.natcross.serveritem.ClientServiceThread;
-import person.pluto.natcross.serveritem.ListenServerControl;
+import person.pluto.natcross.server.NatcrossServer;
 import person.pluto.natcross.service.IListenPortService;
+import person.pluto.natcross2.serverside.client.ClientServiceThread;
 
 @SpringBootApplication
 public class NatcrossBootApplication implements ApplicationRunner {
@@ -27,10 +26,10 @@ public class NatcrossBootApplication implements ApplicationRunner {
     private ClientServiceThread clientServiceThread;
 
     @Autowired
-    private ClearInvalidSocketPartThread clearInvalidSocketPartThread;
+    private IListenPortService listenPortService;
 
     @Autowired
-    private IListenPortService listenPortService;
+    private NatcrossServer natcrossServer;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -41,10 +40,9 @@ public class NatcrossBootApplication implements ApplicationRunner {
         List<ListenPort> list = listenPortService.list(queryWrapper);
 
         for (ListenPort listenPort : list) {
-            ListenServerControl.createNewListenServer(listenPort.getListenPort());
+            natcrossServer.createNewListen(listenPort);
         }
 
-        clearInvalidSocketPartThread.start();
     }
 
 }

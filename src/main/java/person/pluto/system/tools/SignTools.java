@@ -69,7 +69,7 @@ public class SignTools {
      * @return
      */
     public static boolean isSignatureValid(final Map<String, String> data, String signKey, Long maxDiffTime,
-            List<Object> objectList) {
+            List<?> objectList) {
         if (!isTimeOutValid(data.get(FIELD_TIMESTAMP), maxDiffTime)) {
             return false;
         }
@@ -157,7 +157,7 @@ public class SignTools {
      * @return
      */
     public static Map<String, String> fullSignature(Map<String, String> data, String signKey, Object fileObject) {
-        return fullSignature(data, signKey, Arrays.asList(fileObject));
+        return fullSignature(data, signKey, fileObject == null ? null : Arrays.asList(fileObject));
     }
 
     /**
@@ -170,7 +170,7 @@ public class SignTools {
      * @param objectList
      * @return
      */
-    public static Map<String, String> fullSignature(Map<String, String> data, String signKey, List<Object> objectList) {
+    public static Map<String, String> fullSignature(Map<String, String> data, String signKey, List<?> objectList) {
         if (objectList != null && objectList.size() > 0) {
             data.put(FIELD_CONTENT_MD5, getMultipleObjectContentMD5(objectList));
         }
@@ -283,7 +283,7 @@ public class SignTools {
      * @param objectList
      * @return
      */
-    public static String getMultipleObjectContentMD5(List<Object> objectList) {
+    public static String getMultipleObjectContentMD5(List<?> objectList) {
         if (objectList == null || objectList.size() < 1) {
             return null;
         }
@@ -333,14 +333,6 @@ public class SignTools {
         }
 
         return stringBuilder.toString();
-
-        // tmder，为了配合以前指定的单文件签名策略，这里不能再进行md5
-//        MessageDigest md5Digest = DigestUtils.getMd5Digest();
-//
-//        for (String string : destList) {
-//            DigestUtils.updateDigest(md5Digest, string);
-//        }
-//        return Base64.encodeBase64String(md5Digest.digest());
     }
 
     /**

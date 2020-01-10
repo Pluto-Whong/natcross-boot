@@ -17,9 +17,9 @@ spring:
       - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
   devtools:
     livereload:
-      enabled: false
+      enabled: true
     restart:
-      enabled: ${RESTART_ENABLED:true}
+      enabled: true
   jackson:
     default-property-inclusion: NON_NULL
   datasource:
@@ -55,12 +55,8 @@ mybatis-plus:
       logic-not-delete-value: 0
       logic-delete-value: 1
 
-common:
-  constants:
-    MOUDLE_NAME: ${MOUDLE_NAME:${spring.application.name}}
-    LOCAL_ADDRESS: http://${LOCAL_ADDRESS:127.0.0.1}:${server.port}
-    
 natcross:
-  constants:
-    STREAM_CACHE_SIZE: 4096
-    CLIENT_SERVER_PORT: 10010
+  aes-key: 0PMudFSqJ9WsQrTC60sva9sJAV4PF5iOBjKZW17NeF4=
+  token-key: tokenKey
+  client:
+    listen-port: 10010

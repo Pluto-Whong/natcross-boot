@@ -13,9 +13,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import person.pluto.natcross.entity.ListenPort;
-import person.pluto.natcross.serveritem.ListenServerControl;
-import person.pluto.natcross.serveritem.ServerListenThread;
+import person.pluto.natcross.server.NatcrossServer;
 import person.pluto.natcross.service.IListenPortService;
+import person.pluto.natcross2.serverside.listen.ListenServerControl;
+import person.pluto.natcross2.serverside.listen.ServerListenThread;
 import person.pluto.system.model.ResultModel;
 import person.pluto.system.model.enumeration.ResultEnum;
 import person.pluto.system.tools.ValidatorUtils;
@@ -26,6 +27,9 @@ public class NatcrossController {
 
     @Autowired
     private IListenPortService listenPortService;
+
+    @Autowired
+    private NatcrossServer natcrossServer;
 
     /**
      * 创建新的监听，并保存记录
@@ -65,9 +69,8 @@ public class NatcrossController {
         }
 
         // 创建监听
-        ServerListenThread createNewListenServer = ListenServerControl
-                .createNewListenServer(listenPort.getListenPort());
-        if (createNewListenServer == null) {
+        boolean createNewListen = natcrossServer.createNewListen(listenPort);
+        if (!createNewListen) {
             return ResultEnum.CREATE_NEW_LISTEN_FAIL.toResultModel();
         }
         return ResultEnum.SUCCESS.toResultModel();
@@ -121,9 +124,9 @@ public class NatcrossController {
      * @return
      */
     @RequestMapping("createNewListen")
-    public Object createNewListen(Integer listenPort) {
-        ServerListenThread createNewListenServer = ListenServerControl.createNewListenServer(listenPort);
-        if (createNewListenServer == null) {
+    public ResultModel createNewListen(Integer listenPort) {
+        boolean createNewListen = natcrossServer.createNewListen(listenPort);
+        if (!createNewListen) {
             return ResultEnum.CREATE_NEW_LISTEN_FAIL.toResultModel();
         }
         return ResultEnum.SUCCESS.toResultModel();
@@ -138,8 +141,8 @@ public class NatcrossController {
      * @return
      */
     @RequestMapping("stopListen")
-    public Object stopListen(Integer listenPort) {
-        ListenServerControl.remove(listenPort);
+    public ResultModel stopListen(Integer listenPort) {
+        natcrossServer.removeListen(listenPort);
         return ResultEnum.SUCCESS.toResultModel();
     }
 
@@ -152,8 +155,8 @@ public class NatcrossController {
      * @return
      */
     @RequestMapping("removeListen")
-    public Object removeListen(Integer listenPort) {
-        ListenServerControl.remove(listenPort);
+    public ResultModel removeListen(Integer listenPort) {
+        natcrossServer.removeListen(listenPort);
         listenPortService.removeById(listenPort);
         return ResultEnum.SUCCESS.toResultModel();
     }
@@ -166,7 +169,7 @@ public class NatcrossController {
      * @return
      */
     @RequestMapping("getAllListenServer")
-    public Object getAllListenServer() {
+    public ResultModel getAllListenServer() {
 
         QueryWrapper<ListenPort> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().orderByAsc(ListenPort::getListenPort);
@@ -198,6 +201,18 @@ public class NatcrossController {
         jsonObject.put("independentList", independentList);
 
         return ResultEnum.SUCCESS.toResultModel().setData(jsonObject);
+    }
+
+    /**
+     * 通过签名的方式进行获取全部接口信息
+     * 
+     * @author Pluto
+     * @since 2020-01-10 10:14:09
+     * @return
+     */
+    @RequestMapping("/projectSign/getAllListenServer")
+    public ResultModel getAllListenServerProjectSign() {
+        return this.getAllListenServer();
     }
 
 }
