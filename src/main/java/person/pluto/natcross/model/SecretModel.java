@@ -13,7 +13,7 @@ import lombok.Data;
  * @since 2020-01-10 09:53:51
  */
 @Data
-public class SercretModel {
+public class SecretModel {
 
     /**
      * base64格式的AES密钥

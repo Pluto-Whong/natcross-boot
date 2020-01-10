@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import person.pluto.natcross.model.CertModel;
-import person.pluto.natcross.model.SercretModel;
+import person.pluto.natcross.model.SecretModel;
 import person.pluto.natcross2.model.InteractiveModel;
 import person.pluto.natcross2.serverside.client.ClientServiceThread;
 import person.pluto.natcross2.serverside.client.config.IClientServiceConfig;
@@ -19,11 +19,11 @@ import person.pluto.natcross2.serverside.client.config.SimpleClientServiceConfig
 @Configuration
 public class NatcrossSpring {
 
-    @Bean("sercret")
+    @Bean("secret")
     @Primary
     @ConfigurationProperties(prefix = "natcross")
-    public SercretModel getSercret() {
-        return new SercretModel();
+    public SecretModel getSecret() {
+        return new SecretModel();
     }
 
     @Bean("cert")
@@ -37,12 +37,12 @@ public class NatcrossSpring {
     @Primary
     @ConfigurationProperties(prefix = "natcross.client")
     public IClientServiceConfig<InteractiveModel, InteractiveModel> getClientServiceConfig(
-            @Qualifier("sercret") SercretModel sercret) {
+            @Qualifier("secret") SecretModel secret) {
 
-        if (sercret.isValid()) {
+        if (secret.isValid()) {
             SecretSimpleClientServiceConfig secretSimpleClientServiceConfig = new SecretSimpleClientServiceConfig();
-            secretSimpleClientServiceConfig.setBaseAesKey(sercret.getAeskey());
-            secretSimpleClientServiceConfig.setTokenKey(sercret.getTokenKey());
+            secretSimpleClientServiceConfig.setBaseAesKey(secret.getAeskey());
+            secretSimpleClientServiceConfig.setTokenKey(secret.getTokenKey());
             return secretSimpleClientServiceConfig;
         } else {
             return new SimpleClientServiceConfig();

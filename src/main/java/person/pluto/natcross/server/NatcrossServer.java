@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import person.pluto.natcross.entity.ListenPort;
 import person.pluto.natcross.enumeration.PortTypeEnum;
 import person.pluto.natcross.model.CertModel;
-import person.pluto.natcross.model.SercretModel;
+import person.pluto.natcross.model.SecretModel;
 import person.pluto.natcross2.serverside.listen.ListenServerControl;
 import person.pluto.natcross2.serverside.listen.config.IListenServerConfig;
 import person.pluto.natcross2.serverside.listen.config.SecretSimpleListenServerConfig;
@@ -34,7 +34,7 @@ import person.pluto.natcross2.serverside.listen.serversocket.ICreateServerSocket
 public class NatcrossServer {
 
     @Autowired
-    private SercretModel sercret;
+    private SecretModel secret;
 
     @Autowired
     private CertModel certModel;
@@ -80,11 +80,11 @@ public class NatcrossServer {
     public boolean createNewListen(ListenPort listenPortModel) {
         SimpleListenServerConfig config;
 
-        if (sercret.isValid()) {
+        if (secret.isValid()) {
             SecretSimpleListenServerConfig secretConfig = new SecretSimpleListenServerConfig(
                     listenPortModel.getListenPort());
-            secretConfig.setBaseAesKey(sercret.getAeskey());
-            secretConfig.setTokenKey(sercret.getTokenKey());
+            secretConfig.setBaseAesKey(secret.getAeskey());
+            secretConfig.setTokenKey(secret.getTokenKey());
 
             config = secretConfig;
         } else {
@@ -122,10 +122,10 @@ public class NatcrossServer {
     public boolean createNewListen(int listenPort) {
         IListenServerConfig config;
 
-        if (sercret.isValid()) {
+        if (secret.isValid()) {
             SecretSimpleListenServerConfig secretConfig = new SecretSimpleListenServerConfig(listenPort);
-            secretConfig.setBaseAesKey(sercret.getAeskey());
-            secretConfig.setTokenKey(sercret.getTokenKey());
+            secretConfig.setBaseAesKey(secret.getAeskey());
+            secretConfig.setTokenKey(secret.getTokenKey());
 
             config = secretConfig;
         } else {
