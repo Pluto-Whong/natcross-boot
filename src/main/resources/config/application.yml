@@ -56,7 +56,15 @@ mybatis-plus:
       logic-delete-value: 1
 
 natcross:
+  ## 交互密钥和签名key
   aes-key: 0PMudFSqJ9WsQrTC60sva9sJAV4PF5iOBjKZW17NeF4=
   token-key: tokenKey
+  cert:
+    ## 证书存放的基础路径
+    base-path: ${CERT_BASE_PATH:}
+    ## 默认证书文件名，采用相对路径的方式，只支持pkcs12格式证书
+    default-cert-name: ${DEFAULT_CERT_NAME:}
+    ## 默认证书密码
+    default-cert-password: ${DEFAULT_CERT_PASSWORD:}
   client:
     listen-port: 10010

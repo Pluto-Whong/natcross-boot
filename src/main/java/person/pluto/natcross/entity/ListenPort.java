@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import person.pluto.natcross.enumeration.PortTypeEnum;
 import person.pluto.natcross2.serverside.listen.ServerListenThread;
 
 /**
@@ -42,6 +44,15 @@ public class ListenPort implements Serializable {
     @TableField("on_start")
     private Boolean onStart;
 
+    @TableField("port_type")
+    private Integer portType;
+
+    @TableField("cert_path")
+    private String certPath;
+
+    @TableField("cert_password")
+    private String certPassword;
+
     @TableField(value = "gmt_create", fill = FieldFill.INSERT)
     private LocalDateTime gmtCreate;
 
@@ -69,6 +80,17 @@ public class ListenPort implements Serializable {
             return "已启动但未监听";
         }
         return "运行中";
+    }
+
+    /**
+     * 端口类型
+     * 
+     * @author Pluto
+     * @since 2020-01-10 11:44:41
+     * @return
+     */
+    public PortTypeEnum getPortTypeEnum() {
+        return PortTypeEnum.getEnumByCode(this.getPortType());
     }
 
 }

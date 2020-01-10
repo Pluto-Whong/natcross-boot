@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import person.pluto.natcross.model.CertModel;
 import person.pluto.natcross.model.SercretModel;
 import person.pluto.natcross2.model.InteractiveModel;
 import person.pluto.natcross2.serverside.client.ClientServiceThread;
@@ -23,6 +24,13 @@ public class NatcrossSpring {
     @ConfigurationProperties(prefix = "natcross")
     public SercretModel getSercret() {
         return new SercretModel();
+    }
+
+    @Bean("cert")
+    @Primary
+    @ConfigurationProperties(prefix = "natcross.cert")
+    public CertModel getCert() {
+        return new CertModel();
     }
 
     @Bean("clientServiceConfig")

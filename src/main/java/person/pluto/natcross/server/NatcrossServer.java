@@ -1,14 +1,26 @@
 package person.pluto.natcross.server;
 
+import java.io.FileInputStream;
+import java.net.ServerSocket;
+import java.security.KeyStore;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocketFactory;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import person.pluto.natcross.entity.ListenPort;
+import person.pluto.natcross.enumeration.PortTypeEnum;
+import person.pluto.natcross.model.CertModel;
 import person.pluto.natcross.model.SercretModel;
 import person.pluto.natcross2.serverside.listen.ListenServerControl;
 import person.pluto.natcross2.serverside.listen.config.IListenServerConfig;
 import person.pluto.natcross2.serverside.listen.config.SecretSimpleListenServerConfig;
 import person.pluto.natcross2.serverside.listen.config.SimpleListenServerConfig;
+import person.pluto.natcross2.serverside.listen.serversocket.ICreateServerSocket;
 
 /**
  * <p>
@@ -24,6 +36,37 @@ public class NatcrossServer {
     @Autowired
     private SercretModel sercret;
 
+    @Autowired
+    private CertModel certModel;
+
+    /**
+     * 获取https监听端口
+     * 
+     * @author Pluto
+     * @since 2020-01-10 11:59:33
+     * @param sslKeyStorePath
+     * @param sslKeyStorePassword
+     * @return
+     */
+    private ICreateServerSocket newHTTPsCreateServerSocket(String sslKeyStorePath, String sslKeyStorePassword) {
+        return new ICreateServerSocket() {
+            @Override
+            public ServerSocket createServerSocket(int listenPort) throws Exception {
+                KeyStore kstore = KeyStore.getInstance("PKCS12");
+                kstore.load(new FileInputStream(sslKeyStorePath), sslKeyStorePassword.toCharArray());
+                KeyManagerFactory keyFactory = KeyManagerFactory.getInstance("sunx509");
+                keyFactory.init(kstore, sslKeyStorePassword.toCharArray());
+
+                SSLContext ctx = SSLContext.getInstance("TLSv1.2");
+                ctx.init(keyFactory.getKeyManagers(), null, null);
+
+                SSLServerSocketFactory serverSocketFactory = ctx.getServerSocketFactory();
+
+                return serverSocketFactory.createServerSocket(listenPort);
+            }
+        };
+    }
+
     /**
      * 创建新的监听
      * 
@@ -33,7 +76,37 @@ public class NatcrossServer {
      * @return
      */
     public boolean createNewListen(ListenPort listenPortModel) {
-        return this.createNewListen(listenPortModel.getListenPort());
+        SimpleListenServerConfig config;
+
+        if (sercret.isValid()) {
+            SecretSimpleListenServerConfig secretConfig = new SecretSimpleListenServerConfig(
+                    listenPortModel.getListenPort());
+            secretConfig.setBaseAesKey(sercret.getAeskey());
+            secretConfig.setTokenKey(sercret.getTokenKey());
+
+            config = secretConfig;
+        } else {
+            SimpleListenServerConfig simpleConfig = new SimpleListenServerConfig(listenPortModel.getListenPort());
+            config = simpleConfig;
+        }
+
+        if (PortTypeEnum.HTTPS.equals(listenPortModel.getPortTypeEnum())) {
+            String sslKeyStoreFileName;
+            String sslKeyStorePassword;
+
+            if (StringUtils.isAnyBlank(listenPortModel.getCertPath(), listenPortModel.getCertPassword())) {
+                sslKeyStoreFileName = certModel.getDefaultCertName();
+                sslKeyStorePassword = certModel.getDefaultCertPassword();
+            } else {
+                sslKeyStoreFileName = listenPortModel.getCertPath();
+                sslKeyStorePassword = listenPortModel.getCertPassword();
+            }
+
+            config.setCreateServerSocket(
+                    this.newHTTPsCreateServerSocket(certModel.formatCertPath(sslKeyStoreFileName), sslKeyStorePassword));
+        }
+
+        return ListenServerControl.createNewListenServer(config) != null;
     }
 
     /**
