@@ -55,6 +55,11 @@ mybatis-plus:
     db-config:
       logic-not-delete-value: 0
       logic-delete-value: 1
+      
+common:
+  constants:
+    SERVER_SIGN_KEY: serverSignKey
+    SIGN_MAX_DIFF_MILLIS: 10000
 
 natcross:
   ## 交互密钥和签名key

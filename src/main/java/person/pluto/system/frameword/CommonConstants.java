@@ -44,4 +44,14 @@ public class CommonConstants {
         log.trace("SHIRO_HASH_ITERATIONS[{}]", SHIRO_HASH_ITERATIONS);
     }
 
+    public void setSERVER_SIGN_KEY(String sERVER_SIGN_KEY) {
+        SERVER_SIGN_KEY = sERVER_SIGN_KEY;
+        log.trace("SERVER_SIGN_KEY[{}]", SERVER_SIGN_KEY);
+    }
+
+    public void setSIGN_MAX_DIFF_MILLIS(Long sIGN_MAX_DIFF_MILLIS) {
+        SIGN_MAX_DIFF_MILLIS = sIGN_MAX_DIFF_MILLIS;
+        log.trace("SIGN_MAX_DIFF_MILLIS[{}]", SIGN_MAX_DIFF_MILLIS);
+    }
+
 }
