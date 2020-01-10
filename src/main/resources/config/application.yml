@@ -1,6 +1,7 @@
 server:
   port: ${SERVER_PORT:10080}
 logging:
+  config: ${LOG_CONFIG_PATH:}
   logdir: ${LOG_DIR:/logs/person}
   console-level: debug
   file-level: trace
@@ -57,8 +58,8 @@ mybatis-plus:
 
 natcross:
   ## 交互密钥和签名key
-  aes-key: 0PMudFSqJ9WsQrTC60sva9sJAV4PF5iOBjKZW17NeF4=
-  token-key: tokenKey
+  aes-key: ${NATCROSS_AES_KEY:0PMudFSqJ9WsQrTC60sva9sJAV4PF5iOBjKZW17NeF4=}
+  token-key: ${NATCROSS_TOKEN_KEY:tokenKey}
   cert:
     ## 证书存放的基础路径
     base-path: ${CERT_BASE_PATH:}

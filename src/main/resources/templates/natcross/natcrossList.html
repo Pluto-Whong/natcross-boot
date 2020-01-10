@@ -32,6 +32,15 @@
 							align : 'center',
 							sortable : true
 						}, {
+							title : '端口类型',
+							field : 'portTypeEnum',
+							formatter : function(value, row, index) {
+								return value == null ? "-" : value.comment;
+							}
+						}, {
+							title : '证书配置',
+							field : 'certStatus'
+						}, {
 							title : '接口描述',
 							field : 'portDescribe',
 							formatter : function(value, row, index) {
@@ -70,7 +79,13 @@
 							}
 						}, {
 							title : '监听状态',
-							field : 'listenStatus'
+							field : 'listenStatus',
+							formatter : function(value, row, index) {
+								if (value == null) {
+									return '-';
+								}
+								return value.comment;
+							}
 						}, {
 							title : '连接数',
 							field : 'serverListenThread',
@@ -109,6 +124,20 @@
 							socketPartProccesFun(rowData);
 						}
 					});
+	
+	$.post("/natcross/usablePortTypes", {}, function(result) {
+		if (result.retCod != '1000') {
+			$.messager.alert('错误', result.retMsg, 'error');
+		}
+		$('#natcrossList-panel-portType').combobox({
+		    data:result.data,
+		    valueField:'code',
+		    textField:'comment'
+		});
+	});
+	
+	
+	
 
 	function natcrossListRefresh() {
 		$('#natcrossListDataGrid').datagrid('reload');
@@ -126,6 +155,7 @@
 		$('#natcrossList-ListenPortPanel')
 				.dialog(
 						{
+							title: "保存新的监听",
 							buttons : [ {
 								text : '提交',
 								handler : function() {
@@ -192,10 +222,13 @@
 		$("#natcrossList-panel-onStart").checkbox({
 			checked : _select.onStart
 		});
+		
+		$('#natcrossList-panel-portType').combobox('setValue', _select.portType);
 
 		$('#natcrossList-ListenPortPanel')
 				.dialog(
 						{
+							title: "更新端口信息",
 							buttons : [ {
 								text : '提交',
 								handler : function() {
@@ -381,7 +414,7 @@
 		for (var i = 0; i < fieldList.length; i++) {
 			var field = fieldList[i];
 			var value = field.value;
-			
+
 			var tr = null;
 			// 针对不同的页使用不同的列数进行展示，效果较好
 			if (i % tableCol == 0) {
@@ -416,37 +449,49 @@
 	<div id="natcrossList-ListenPortPanel" class="easyui-dialog"
 		title="保存新的监听"
 		data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true,cache:false">
-		<form id="natcrossList-ListenPortPanel-form" method="post">
+		<form id="natcrossList-ListenPortPanel-form" method="post" enctype="multipart/form-data">
 			<table
-				style="margin: 10px; border-collapse: separate; border-spacing: 5px 5px;">
+				style="margin: 10px; width:300px; border-collapse: separate; border-spacing: 5px 5px;">
 				<tr>
 					<td style="text-align: right;">端口：</td>
 					<td><input id="natcrossList-panel-listenPort"
 						name="listenPort" class="easyui-numberbox"
-						data-options="required:true" style="width: 100px"></td>
+						data-options="required:true" ></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">接口描述：</td>
 					<td><input id="natcrossList-panel-portDescribe"
 						name="portDescribe" class="easyui-textbox"
-						data-options="required:true" style="width: 100px"></td>
+						data-options="required:true" ></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">目标IP：</td>
 					<td><input id="natcrossList-panel-destIp" name="destIp"
-						class="easyui-textbox" data-options="required:true"
-						style="width: 100px"></td>
+						class="easyui-textbox" data-options="required:true" ></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">目标端口：</td>
 					<td><input id="natcrossList-panel-destPort" name="destPort"
-						class="easyui-numberbox" data-options="required:true"
-						style="width: 100px"></td>
+						class="easyui-numberbox" data-options="required:true" ></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">自启：</td>
 					<td><input id="natcrossList-panel-onStart" name="onStart"
 						class="easyui-checkbox" data-options="value:'true',checked:true"></td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">接口类型：</td>
+					<td><input id="natcrossList-panel-portType" class="easyui-combobox" name="portType"></td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">证书文件：</td>
+					<td><input id="natcrossList-panel-certFile" name="certFile" class="easyui-filebox" 
+						data-options=" buttonText:'选择文件' , prompt:'只支持pkcs12的证书'  "></td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">证书密码：</td>
+					<td><input id="natcrossList-panel-certPasswrod" name="certPassword"
+						class="easyui-textbox" data-options="prompt:'配置证书必须要有密码'" ></td>
 				</tr>
 			</table>
 		</form>

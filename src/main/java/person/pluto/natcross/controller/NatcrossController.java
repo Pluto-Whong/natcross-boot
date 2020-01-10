@@ -5,14 +5,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import person.pluto.natcross.entity.ListenPort;
+import person.pluto.natcross.enumeration.PortTypeEnum;
+import person.pluto.natcross.server.FileServer;
 import person.pluto.natcross.server.NatcrossServer;
 import person.pluto.natcross.service.IListenPortService;
 import person.pluto.natcross2.serverside.listen.ListenServerControl;
@@ -31,6 +36,22 @@ public class NatcrossController {
     @Autowired
     private NatcrossServer natcrossServer;
 
+    @Autowired
+    private FileServer fileServer;
+
+    /**
+     * 获取可用的端口类型
+     * 
+     * @author Pluto
+     * @since 2020-01-10 13:57:07
+     * @return
+     */
+    @RequestMapping("/usablePortTypes")
+    public ResultModel usablePortTypes() {
+        PortTypeEnum[] values = PortTypeEnum.values();
+        return ResultModel.ofSuccess(values);
+    }
+
     /**
      * 创建新的监听，并保存记录
      *
@@ -38,9 +59,11 @@ public class NatcrossController {
      * @since 2019-07-22 14:20:35
      * @param listenPort
      * @return
+     * @throws Exception
      */
     @RequestMapping("/createListenPort")
-    public ResultModel createListenPort(ListenPort listenPort) {
+    public ResultModel createListenPort(ListenPort listenPort,
+            @RequestParam(name = "certFile", required = false) MultipartFile certFile) throws Exception {
 
         if (listenPort == null || listenPort.getListenPort() == null || listenPort.getDestIp() == null
                 || !ValidatorUtils.isIPv4Address(listenPort.getDestIp()) || listenPort.getDestPort() == null) {
@@ -53,6 +76,17 @@ public class NatcrossController {
         int count = listenPortService.count(queryWrapper);
         if (count > 0) {
             return ResultEnum.LISTEN_PORT_HAS.toResultModel();
+        }
+
+        if (certFile != null) {
+            if (StringUtils.isBlank(listenPort.getCertPassword())) {
+                return ResultEnum.PARAM_FAIL.toResultModel().setRetMsg("需要设置证书密码");
+            }
+            String saveCertFile = fileServer.saveCertFile(certFile, listenPort);
+            listenPort.setCertPath(saveCertFile);
+        } else {
+            listenPort.setCertPath(null);
+            listenPort.setCertPassword(null);
         }
 
         listenPort.setGmtCreate(null);
@@ -83,9 +117,11 @@ public class NatcrossController {
      * @since 2019-07-22 14:20:35
      * @param listenPort
      * @return
+     * @throws Exception
      */
     @RequestMapping("/updateListenPort")
-    public ResultModel updateListenPort(ListenPort listenPort) {
+    public ResultModel updateListenPort(ListenPort listenPort,
+            @RequestParam(name = "certFile", required = false) MultipartFile certFile) throws Exception {
 
         if (listenPort == null || listenPort.getListenPort() == null
                 || (listenPort.getDestIp() != null && !ValidatorUtils.isIPv4Address(listenPort.getDestIp()))) {
@@ -98,6 +134,17 @@ public class NatcrossController {
         int count = listenPortService.count(queryWrapper);
         if (count < 1) {
             return ResultEnum.LISTEN_PORT_NO_HAS.toResultModel();
+        }
+
+        if (certFile != null) {
+            if (StringUtils.isBlank(listenPort.getCertPassword())) {
+                return ResultEnum.PARAM_FAIL.toResultModel().setRetMsg("需要设置证书密码");
+            }
+            String saveCertFile = fileServer.saveCertFile(certFile, listenPort);
+            listenPort.setCertPath(saveCertFile);
+        } else {
+            listenPort.setCertPath(null);
+            listenPort.setCertPassword(null);
         }
 
         listenPort.setGmtCreate(null);
@@ -125,7 +172,15 @@ public class NatcrossController {
      */
     @RequestMapping("createNewListen")
     public ResultModel createNewListen(Integer listenPort) {
-        boolean createNewListen = natcrossServer.createNewListen(listenPort);
+
+        ListenPort model = listenPortService.getById(listenPort);
+        boolean createNewListen = false;
+        if (model == null) {
+            createNewListen = natcrossServer.createNewListen(listenPort);
+        } else {
+            createNewListen = natcrossServer.createNewListen(model);
+        }
+
         if (!createNewListen) {
             return ResultEnum.CREATE_NEW_LISTEN_FAIL.toResultModel();
         }

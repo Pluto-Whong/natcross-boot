@@ -4,40 +4,42 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * <p>
- * 端口类型
+ * 端口运行状态
  * </p>
  *
  * @author Pluto
  * @since 2020-01-10 11:39:40
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum PortTypeEnum {
+public enum ListenStatusEnum {
 
     //
-    NORMAL(0, "普通"),
+    STOP(1, "未启动"),
     //
-    HTTPS(10, "HTTPs"),
+    WAIT(5, "已启动但未监听"),
+    //
+    RUNNING(9, "运行中"),
     //
     ;
 
     private Integer code;
     private String comment;
 
-    private PortTypeEnum(int code, String comment) {
+    private ListenStatusEnum(int code, String comment) {
         this.code = code;
         this.comment = comment;
     }
 
-    public static PortTypeEnum getEnumByCode(Integer code) {
+    public static ListenStatusEnum getEnumByCode(Integer code) {
         if (code == null) {
-            return NORMAL;
+            return null;
         }
-        for (PortTypeEnum e : PortTypeEnum.values()) {
+        for (ListenStatusEnum e : ListenStatusEnum.values()) {
             if (e.code.equals(code)) {
                 return e;
             }
         }
-        return NORMAL;
+        return null;
     }
 
     public Integer getCode() {

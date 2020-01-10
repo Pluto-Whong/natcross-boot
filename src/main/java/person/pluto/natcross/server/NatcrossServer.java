@@ -52,17 +52,19 @@ public class NatcrossServer {
         return new ICreateServerSocket() {
             @Override
             public ServerSocket createServerSocket(int listenPort) throws Exception {
-                KeyStore kstore = KeyStore.getInstance("PKCS12");
-                kstore.load(new FileInputStream(sslKeyStorePath), sslKeyStorePassword.toCharArray());
-                KeyManagerFactory keyFactory = KeyManagerFactory.getInstance("sunx509");
-                keyFactory.init(kstore, sslKeyStorePassword.toCharArray());
+                try (FileInputStream sslKeyStoreFile = new FileInputStream(sslKeyStorePath)) {
+                    KeyStore kstore = KeyStore.getInstance("PKCS12");
+                    kstore.load(sslKeyStoreFile, sslKeyStorePassword.toCharArray());
+                    KeyManagerFactory keyFactory = KeyManagerFactory.getInstance("sunx509");
+                    keyFactory.init(kstore, sslKeyStorePassword.toCharArray());
 
-                SSLContext ctx = SSLContext.getInstance("TLSv1.2");
-                ctx.init(keyFactory.getKeyManagers(), null, null);
+                    SSLContext ctx = SSLContext.getInstance("TLSv1.2");
+                    ctx.init(keyFactory.getKeyManagers(), null, null);
 
-                SSLServerSocketFactory serverSocketFactory = ctx.getServerSocketFactory();
+                    SSLServerSocketFactory serverSocketFactory = ctx.getServerSocketFactory();
 
-                return serverSocketFactory.createServerSocket(listenPort);
+                    return serverSocketFactory.createServerSocket(listenPort);
+                }
             }
         };
     }
@@ -102,8 +104,8 @@ public class NatcrossServer {
                 sslKeyStorePassword = listenPortModel.getCertPassword();
             }
 
-            config.setCreateServerSocket(
-                    this.newHTTPsCreateServerSocket(certModel.formatCertPath(sslKeyStoreFileName), sslKeyStorePassword));
+            config.setCreateServerSocket(this.newHTTPsCreateServerSocket(certModel.formatCertPath(sslKeyStoreFileName),
+                    sslKeyStorePassword));
         }
 
         return ListenServerControl.createNewListenServer(config) != null;
