@@ -41,7 +41,7 @@ spring:
         master:
           type: com.alibaba.druid.pool.DruidDataSource
           driver-class-name: org.sqlite.JDBC
-          url: jdbc:sqlite:${user.dir}/doc/natcross.db3
+          url: jdbc:sqlite:${SQLITE_DATABASE_PATH:${user.dir}/doc/natcross.db3}
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -58,7 +58,8 @@ mybatis-plus:
       
 common:
   constants:
-    SERVER_SIGN_KEY: serverSignKey
+    ## 服务端的签名key，散列算法，约等于对称密钥，客户端使用签名方式获取接口状态
+    SERVER_SIGN_KEY: ${SERVER_SIGN_KEY:serverSignKey}
     SIGN_MAX_DIFF_MILLIS: 10000
 
 natcross:
@@ -73,4 +74,4 @@ natcross:
     ## 默认证书密码
     default-cert-password: ${DEFAULT_CERT_PASSWORD:}
   client:
-    listen-port: 10010
+    listen-port: ${NATCROSS_CLIENT_SERVICE_PORT:10010}
