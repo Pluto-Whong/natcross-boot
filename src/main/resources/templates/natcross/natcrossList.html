@@ -88,7 +88,7 @@
 							}
 						}, {
 							title : '连接数',
-							field : 'serverListenThread',
+							field : 'serverListenInfo',
 							align : 'center',
 							formatter : function(value, row, index) {
 								if (value == null) {
@@ -124,20 +124,17 @@
 							socketPartProccesFun(rowData);
 						}
 					});
-	
+
 	$.post("/natcross/usablePortTypes", {}, function(result) {
 		if (result.retCod != '1000') {
 			$.messager.alert('错误', result.retMsg, 'error');
 		}
 		$('#natcrossList-panel-portType').combobox({
-		    data:result.data,
-		    valueField:'code',
-		    textField:'comment'
+			data : result.data,
+			valueField : 'code',
+			textField : 'comment'
 		});
 	});
-	
-	
-	
 
 	function natcrossListRefresh() {
 		$('#natcrossListDataGrid').datagrid('reload');
@@ -155,7 +152,7 @@
 		$('#natcrossList-ListenPortPanel')
 				.dialog(
 						{
-							title: "保存新的监听",
+							title : "保存新的监听",
 							buttons : [ {
 								text : '提交',
 								handler : function() {
@@ -222,13 +219,14 @@
 		$("#natcrossList-panel-onStart").checkbox({
 			checked : _select.onStart
 		});
-		
-		$('#natcrossList-panel-portType').combobox('setValue', _select.portType);
+
+		$('#natcrossList-panel-portType')
+				.combobox('setValue', _select.portType);
 
 		$('#natcrossList-ListenPortPanel')
 				.dialog(
 						{
-							title: "更新端口信息",
+							title : "更新端口信息",
 							buttons : [ {
 								text : '提交',
 								handler : function() {
@@ -341,7 +339,7 @@
 			$('#natcrossList-SocketPartAccordion').accordion('remove', index);
 		}
 
-		if (!row.serverListenThread) {
+		if (!row.serverListenInfo) {
 			socketPartAccordionShowFun({
 				title : '无数据',
 				tableId : 'no-data'
@@ -349,7 +347,7 @@
 			return;
 		}
 
-		var map = row.serverListenThread.socketPartMap;
+		var map = row.serverListenInfo.socketPartMap;
 
 		for ( var key in map) {
 
@@ -365,29 +363,17 @@
 					fieldName : "创建时间",
 					value : mapValue.createTime
 				}, {
-					fieldName : "监听端口",
-					value : mapValue.listenSocketString
+					fieldName : "外网端口",
+					value : mapValue.recvSocket
 				}, {
-					fieldName : "发送端口",
-					value : mapValue.sendSocketString
+					fieldName : "隧道端口",
+					value : mapValue.sendSocket
 				}, {
-					fieldName : "监听服务可用",
-					value : mapValue.serverToClientThread,
-					formatter : function(data) {
-						if (!data) {
-							return false;
-						}
-						return data.alive;
-					}
+					fieldName : "外网端口对可用",
+					value : mapValue.recvSocketValid
 				}, {
-					fieldName : "发送服务可用",
-					value : mapValue.clientToServerThread,
-					formatter : function(data) {
-						if (!data) {
-							return false;
-						}
-						return data.alive;
-					}
+					fieldName : "隧道端口对可用",
+					value : mapValue.sendSocketValid
 				} ]
 			};
 			socketPartAccordionShowFun(socketPartEntity, 1);
@@ -449,30 +435,31 @@
 	<div id="natcrossList-ListenPortPanel" class="easyui-dialog"
 		title="保存新的监听"
 		data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true,cache:false">
-		<form id="natcrossList-ListenPortPanel-form" method="post" enctype="multipart/form-data">
+		<form id="natcrossList-ListenPortPanel-form" method="post"
+			enctype="multipart/form-data">
 			<table
-				style="margin: 10px; width:300px; border-collapse: separate; border-spacing: 5px 5px;">
+				style="margin: 10px; width: 300px; border-collapse: separate; border-spacing: 5px 5px;">
 				<tr>
 					<td style="text-align: right;">端口：</td>
 					<td><input id="natcrossList-panel-listenPort"
 						name="listenPort" class="easyui-numberbox"
-						data-options="required:true" ></td>
+						data-options="required:true"></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">接口描述：</td>
 					<td><input id="natcrossList-panel-portDescribe"
 						name="portDescribe" class="easyui-textbox"
-						data-options="required:true" ></td>
+						data-options="required:true"></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">目标IP：</td>
 					<td><input id="natcrossList-panel-destIp" name="destIp"
-						class="easyui-textbox" data-options="required:true" ></td>
+						class="easyui-textbox" data-options="required:true"></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">目标端口：</td>
 					<td><input id="natcrossList-panel-destPort" name="destPort"
-						class="easyui-numberbox" data-options="required:true" ></td>
+						class="easyui-numberbox" data-options="required:true"></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">自启：</td>
@@ -481,17 +468,20 @@
 				</tr>
 				<tr>
 					<td style="text-align: right;">接口类型：</td>
-					<td><input id="natcrossList-panel-portType" class="easyui-combobox" name="portType"></td>
+					<td><input id="natcrossList-panel-portType"
+						class="easyui-combobox" name="portType"></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">证书文件：</td>
-					<td><input id="natcrossList-panel-certFile" name="certFile" class="easyui-filebox" 
+					<td><input id="natcrossList-panel-certFile" name="certFile"
+						class="easyui-filebox"
 						data-options=" buttonText:'选择文件' , prompt:'只支持pkcs12的证书'  "></td>
 				</tr>
 				<tr>
 					<td style="text-align: right;">证书密码：</td>
-					<td><input id="natcrossList-panel-certPasswrod" name="certPassword"
-						class="easyui-textbox" data-options="prompt:'配置证书必须要有密码'" ></td>
+					<td><input id="natcrossList-panel-certPasswrod"
+						name="certPassword" class="easyui-textbox"
+						data-options="prompt:'配置证书必须要有密码'"></td>
 				</tr>
 			</table>
 		</form>
