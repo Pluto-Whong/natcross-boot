@@ -11,7 +11,7 @@ export LOG_DIR=${BASE_DIR}/logs
 export LOG_LEVEL=info
 
 ## 数据库位置，使用sqlite3
-export SQLITE_DATABASE_PATH=./natcross.db3
+export SQLITE_DATABASE_PATH=${BASE_DIR}/natcross.db3
 
 ## 服务端的签名key，散列算法，约等于对称密钥，客户端使用签名方式获取接口状态
 export SERVER_SIGN_KEY=serverSignKey
@@ -30,6 +30,15 @@ export CERT_BASE_PATH=${BASE_DIR}/ssl/
 if [ ! -d $CERT_BASE_PATH ]; then
     mkdir -p $CERT_BASE_PATH
 fi
+
+## 服务端web端口，可以进行可视化操作，以及提供natcross-boot-client的端口获取，client的NATCROSS_HTTP_SERVER变量后面的端口要和该值保持一致
+export SERVER_PORT=10080
+## https的支持，让web操作使用ssl通信，其实就是https，并没有毛用，记得改client的NATCROSS_HTTP_SERVER变量为https
+export SERVER_SSL_ENABLED=false
+#export SERVER_SSL_PROTOCOL='TLSv1.2'
+#export SERVER_SSL_KEY_STORE_TYPE='PKCS12'
+#export SERVER_SSL_KEY_STORE_PATH=
+#export SERVER_SSL_KEY_STORE_PASSWORD=
 
 ## 客户端服务端口，即内网穿透客户端交互的主要服务端口
 export NATCROSS_CLIENT_SERVICE_PORT=10010

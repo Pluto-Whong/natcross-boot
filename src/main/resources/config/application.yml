@@ -1,5 +1,11 @@
 server:
   port: ${SERVER_PORT:10080}
+  ssl:
+    enabled: ${SERVER_SSL_ENABLED:false}
+    protocol: ${SERVER_SSL_PROTOCOL:TLS}
+    key-store-type: ${SERVER_SSL_KEY_STORE_TYPE:PKCS12}
+    key-store: ${SERVER_SSL_KEY_STORE_PATH:}
+    key-store-password: ${SERVER_SSL_KEY_STORE_PASSWORD:}
 logging:
   config: ${LOG_CONFIG_PATH:}
   logdir: ${LOG_DIR:/logs/person}
