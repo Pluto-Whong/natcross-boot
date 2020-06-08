@@ -78,7 +78,7 @@ public class NatcrossController {
             return ResultEnum.LISTEN_PORT_HAS.toResultModel();
         }
 
-        if (certFile != null) {
+        if (certFile != null && certFile.getSize() > 0L) {
             if (StringUtils.isBlank(listenPort.getCertPassword())) {
                 return ResultEnum.PARAM_FAIL.toResultModel().setRetMsg("需要设置证书密码");
             }
@@ -136,7 +136,7 @@ public class NatcrossController {
             return ResultEnum.LISTEN_PORT_NO_HAS.toResultModel();
         }
 
-        if (certFile != null) {
+        if (certFile != null && certFile.getSize() > 0L) {
             if (StringUtils.isBlank(listenPort.getCertPassword())) {
                 return ResultEnum.PARAM_FAIL.toResultModel().setRetMsg("需要设置证书密码");
             }
