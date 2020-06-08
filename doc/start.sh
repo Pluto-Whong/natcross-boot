@@ -27,7 +27,7 @@ export CERT_BASE_PATH=${BASE_DIR}/ssl/
 ## 默认证书密码
 #export DEFAULT_CERT_PASSWORD=
 
-if [ -d $CERT_BASE_PATH ]; then
+if [ ! -d $CERT_BASE_PATH ]; then
     mkdir -p $CERT_BASE_PATH
 fi
 
