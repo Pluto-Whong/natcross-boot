@@ -21,7 +21,7 @@ export NATCROSS_AES_KEY='0PMudFSqJ9WsQrTC60sva9sJAV4PF5iOBjKZW17NeF4='
 export NATCROSS_TOKEN_KEY=tokenKey
 
 ## 证书存放的基础路径
-export CERT_BASE_PATH=${BASE_DIR}/ssl
+export CERT_BASE_PATH=${BASE_DIR}/ssl/
 ## 默认证书文件名，采用相对路径的方式，只支持pkcs12格式证书
 #export DEFAULT_CERT_NAME=
 ## 默认证书密码
