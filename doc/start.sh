@@ -27,6 +27,10 @@ export CERT_BASE_PATH=${BASE_DIR}/ssl/
 ## 默认证书密码
 #export DEFAULT_CERT_PASSWORD=
 
+if [ -d $CERT_BASE_PATH ]; then
+    mkdir -p $CERT_BASE_PATH
+fi
+
 ## 客户端服务端口，即内网穿透客户端交互的主要服务端口
 export NATCROSS_CLIENT_SERVICE_PORT=10010
 
