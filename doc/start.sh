@@ -1,11 +1,13 @@
 #!/bin/bash
 
+BASE_DIR=`dirname $(readlink -f $0)`
+
 ## 服务端地址，使用web管理方式端口
 export SERVER_PORT=10080
 
 ## 日志配置，logback日志引擎
 export LOG_CONFIG_PATH=classpath:config/logback-spring.xml
-export LOG_DIR=./logs
+export LOG_DIR=${BASE_DIR}/logs
 export LOG_LEVEL=info
 
 ## 数据库位置，使用sqlite3
@@ -19,7 +21,7 @@ export NATCROSS_AES_KEY='0PMudFSqJ9WsQrTC60sva9sJAV4PF5iOBjKZW17NeF4='
 export NATCROSS_TOKEN_KEY=tokenKey
 
 ## 证书存放的基础路径
-export CERT_BASE_PATH=./ssl
+export CERT_BASE_PATH=${BASE_DIR}/ssl
 ## 默认证书文件名，采用相对路径的方式，只支持pkcs12格式证书
 #export DEFAULT_CERT_NAME=
 ## 默认证书密码

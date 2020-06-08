@@ -10,6 +10,11 @@ git clone https://github.com/Pluto-Whong/natcross-boot.git ./source_code
 
 mvn clean compile package -Dmaven.test.skip=true -f ./source_code/
 
+if [ ! -f "./stop.sh" ] || [ ! -f "./start.sh" ] || [ ! -f "./natcross.db3" ]; then
+    cp ./source_code/doc/* ./
+    chmod +x ./*.sh
+fi
+
 . ./stop.sh
 
 rm -rf natcross-boot.jar
