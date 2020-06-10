@@ -19,6 +19,7 @@ import java.net.Socket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import person.pluto.natcross.enumeration.ListenStatusEnum;
 import person.pluto.natcross.enumeration.PortTypeEnum;
 import person.pluto.natcross2.api.socketpart.AbsSocketPart;
@@ -32,6 +33,7 @@ import person.pluto.natcross2.serverside.listen.ServerListenThread;
  * @author Pluto
  * @since 2019-07-22 13:55:39
  */
+@Slf4j
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
@@ -141,42 +143,47 @@ public class ListenPort implements Serializable {
      * @return
      */
     public JSONObject getServerListenInfo() {
-        if (serverListenThread == null) {
+        try {
+            if (serverListenThread == null) {
+                return null;
+            }
+            JSONObject json = new JSONObject();
+            json.put("socketPartList", serverListenThread.getSocketPartList());
+
+            JSONObject socketPartJson = new JSONObject();
+
+            Map<String, AbsSocketPart> socketPartMap = serverListenThread.getSocketPartMap();
+            for (Entry<String, AbsSocketPart> entry : socketPartMap.entrySet()) {
+                AbsSocketPart value = entry.getValue();
+
+                JSONObject model = new JSONObject();
+                model.put("valid", value.isValid());
+                model.put("createTime", value.getCreateTime());
+
+                Socket recvSocket = value.getRecvSocket();
+                model.put("recvSocket", recvSocket == null ? "null"
+                        : recvSocket.getLocalPort() + " <- " + recvSocket.getRemoteSocketAddress());
+                model.put("recvSocketValid",
+                        recvSocket == null ? false
+                                : recvSocket.isBound() && recvSocket.isConnected() && !recvSocket.isClosed()
+                                        && !recvSocket.isInputShutdown() && !recvSocket.isOutputShutdown());
+
+                Socket sendSocket = value.getSendSocket();
+                model.put("sendSocket", sendSocket.getLocalPort() + " -> " + sendSocket.getRemoteSocketAddress());
+                model.put("sendSocketValid",
+                        recvSocket == null ? false
+                                : sendSocket.isBound() && sendSocket.isConnected() && !sendSocket.isClosed()
+                                        && !sendSocket.isInputShutdown() && !sendSocket.isOutputShutdown());
+
+                socketPartJson.put(entry.getKey(), model);
+            }
+            json.put("socketPartMap", socketPartJson);
+            return json;
+        } catch (Exception e) {
+            log.error("格式化异常", e);
             return null;
         }
-        JSONObject json = new JSONObject();
-        json.put("socketPartList", serverListenThread.getSocketPartList());
 
-        JSONObject socketPartJson = new JSONObject();
-
-        Map<String, AbsSocketPart> socketPartMap = serverListenThread.getSocketPartMap();
-        for (Entry<String, AbsSocketPart> entry : socketPartMap.entrySet()) {
-            AbsSocketPart value = entry.getValue();
-
-            JSONObject model = new JSONObject();
-            model.put("valid", value.isValid());
-            model.put("createTime", value.getCreateTime());
-
-            Socket recvSocket = value.getRecvSocket();
-            model.put("recvSocket", recvSocket == null ? "null"
-                    : recvSocket.getLocalPort() + " <- " + recvSocket.getRemoteSocketAddress());
-            model.put("recvSocketValid",
-                    recvSocket == null ? false
-                            : recvSocket.isBound() && recvSocket.isConnected() && !recvSocket.isClosed()
-                                    && !recvSocket.isInputShutdown() && !recvSocket.isOutputShutdown());
-
-            Socket sendSocket = value.getSendSocket();
-            model.put("sendSocket", sendSocket.getLocalPort() + " -> " + sendSocket.getRemoteSocketAddress());
-            model.put("sendSocketValid",
-                    recvSocket == null ? false
-                            : sendSocket.isBound() && sendSocket.isConnected() && !sendSocket.isClosed()
-                                    && !sendSocket.isInputShutdown() && !sendSocket.isOutputShutdown());
-
-            socketPartJson.put(entry.getKey(), model);
-        }
-
-        json.put("socketPartMap", socketPartJson);
-        return json;
     }
 
 }
