@@ -143,17 +143,18 @@ public class ListenPort implements Serializable {
      * @return
      */
     public JSONObject getServerListenInfo() {
-        try {
-            if (serverListenThread == null) {
-                return null;
-            }
-            JSONObject json = new JSONObject();
-            json.put("socketPartList", serverListenThread.getSocketPartList());
+        if (serverListenThread == null) {
+            return null;
+        }
+        JSONObject json = new JSONObject();
+        json.put("socketPartList", serverListenThread.getSocketPartList());
 
-            JSONObject socketPartJson = new JSONObject();
+        JSONObject socketPartJson = new JSONObject();
 
-            Map<String, AbsSocketPart> socketPartMap = serverListenThread.getSocketPartMap();
-            for (Entry<String, AbsSocketPart> entry : socketPartMap.entrySet()) {
+        Map<String, AbsSocketPart> socketPartMap = serverListenThread.getSocketPartMap();
+        for (Entry<String, AbsSocketPart> entry : socketPartMap.entrySet()) {
+
+            try {
                 AbsSocketPart value = entry.getValue();
 
                 JSONObject model = new JSONObject();
@@ -169,21 +170,22 @@ public class ListenPort implements Serializable {
                                         && !recvSocket.isInputShutdown() && !recvSocket.isOutputShutdown());
 
                 Socket sendSocket = value.getSendSocket();
-                model.put("sendSocket", sendSocket.getLocalPort() + " -> " + sendSocket.getRemoteSocketAddress());
+                model.put("sendSocket", sendSocket == null ? "null"
+                        : sendSocket.getLocalPort() + " -> " + sendSocket.getRemoteSocketAddress());
                 model.put("sendSocketValid",
                         recvSocket == null ? false
                                 : sendSocket.isBound() && sendSocket.isConnected() && !sendSocket.isClosed()
                                         && !sendSocket.isInputShutdown() && !sendSocket.isOutputShutdown());
 
                 socketPartJson.put(entry.getKey(), model);
+            } catch (Exception e) {
+                log.error("格式化异常", e);
             }
-            json.put("socketPartMap", socketPartJson);
-            return json;
-        } catch (Exception e) {
-            log.error("格式化异常", e);
-            return null;
+
         }
 
+        json.put("socketPartMap", socketPartJson);
+        return json;
     }
 
 }
