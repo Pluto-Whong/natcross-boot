@@ -1,7 +1,8 @@
 package person.pluto.system.frameword;
 
 import lombok.extern.slf4j.Slf4j;
-import person.pluto.natcross2.api.passway.PasswayControl;
+import person.pluto.natcross2.executor.NatcrossExecutor;
+import person.pluto.natcross2.nio.NioHallows;
 import person.pluto.natcross2.serverside.client.ClientServiceThread;
 import person.pluto.natcross2.serverside.listen.ListenServerControl;
 
@@ -21,16 +22,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class DestroyMainDisposable implements DisposableBean {
 
-    @Autowired
-    private ClientServiceThread clientServiceThread;
+	@Autowired
+	private ClientServiceThread clientServiceThread;
 
-    @Override
-    public void destroy() {
-        log.debug("DestroyMainDisposable destroy");
+	@Override
+	public void destroy() {
+		log.debug("DestroyMainDisposable destroy");
 
-        clientServiceThread.cancell();
-        ListenServerControl.closeAll();
-        PasswayControl.closeNow();
-    }
+		clientServiceThread.cancel();
+		ListenServerControl.closeAll();
+		NatcrossExecutor.shutdown();
+		NioHallows.INSTANCE.cancel();
+	}
 
 }
