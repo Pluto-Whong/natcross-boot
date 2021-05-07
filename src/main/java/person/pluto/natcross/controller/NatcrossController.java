@@ -98,7 +98,7 @@ public class NatcrossController {
         }
 
         // 如果指定不自启动，则直接返回，不启动端口
-        if (listenPort.getOnStart() == null && !listenPort.getOnStart()) {
+        if (listenPort.getOnStart() == null || !listenPort.getOnStart()) {
             return ResultEnum.SUCCESS.toResultModel();
         }
 
