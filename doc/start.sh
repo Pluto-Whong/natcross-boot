@@ -14,7 +14,7 @@ export SQLITE_DATABASE_PATH=${BASE_DIR}/natcross.db3
 export SERVER_SIGN_KEY=serverSignKey
 
 ## 交互密钥和签名key
-export NATCROSS_AES_KEY='0PMudFSqJ9WsQrTC60sva9sJAV4PF5iOBjKZW17NeF4='
+export NATCROSS_AES_KEY='1qV/BYx14agUrPFyw4ow+Q=='
 export NATCROSS_TOKEN_KEY=tokenKey
 
 ## 证书存放的基础路径
