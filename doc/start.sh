@@ -2,9 +2,6 @@
 
 BASE_DIR=`dirname $(readlink -f $0)`
 
-## 服务端地址，使用web管理方式端口
-export SERVER_PORT=10080
-
 ## 日志配置，logback日志引擎
 export LOG_CONFIG_PATH=classpath:config/logback-spring.xml
 export LOG_DIR=${BASE_DIR}/logs
