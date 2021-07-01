@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:10080}
+  port: ${SERVER_PORT:10020}
   ssl:
     enabled: ${SERVER_SSL_ENABLED:false}
     protocol: ${SERVER_SSL_PROTOCOL:TLS}
@@ -70,7 +70,7 @@ common:
 
 natcross:
   ## 交互密钥和签名key
-  aes-key: ${NATCROSS_AES_KEY:0PMudFSqJ9WsQrTC60sva9sJAV4PF5iOBjKZW17NeF4=}
+  aes-key: ${NATCROSS_AES_KEY:1qV/BYx14agUrPFyw4ow+Q==}
   token-key: ${NATCROSS_TOKEN_KEY:tokenKey}
   cert:
     ## 证书存放的基础路径
