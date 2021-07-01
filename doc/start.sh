@@ -29,7 +29,7 @@ if [ ! -d $CERT_BASE_PATH ]; then
 fi
 
 ## 服务端web端口，可以进行可视化操作，以及提供natcross-boot-client的端口获取，client的NATCROSS_HTTP_SERVER变量后面的端口要和该值保持一致
-export SERVER_PORT=10080
+export SERVER_PORT=10020
 ## https的支持，让web操作使用ssl通信，其实就是https，并没有毛用，记得改client的NATCROSS_HTTP_SERVER变量为https
 export SERVER_SSL_ENABLED=false
 #export SERVER_SSL_PROTOCOL='TLSv1.2'
