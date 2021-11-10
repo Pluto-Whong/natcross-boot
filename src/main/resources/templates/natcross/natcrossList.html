@@ -104,7 +104,8 @@
 										.concat(data.data.listenPortList);
 								redata = redata
 										.concat(data.data.independentList);
-								return redata;
+
+								return searchFilter(redata);
 							}
 							return data;
 
@@ -128,9 +129,23 @@
 	$.post("/natcross/usablePortTypes", {}, function(result) {
 		if (result.retCod != '1000') {
 			$.messager.alert('错误', result.retMsg, 'error');
+			return;
 		}
 		$('#natcrossList-panel-portType').combobox({
 			data : result.data,
+			valueField : 'code',
+			textField : 'comment'
+		});
+
+		let res = [];
+		res.push({
+			"code":'-1',
+			"comment":'端口类型'
+		});
+		res = res.concat(result.data);
+		$('#search-portType').combobox({
+			value : -1,
+			data : res,
 			valueField : 'code',
 			textField : 'comment'
 		});
@@ -138,6 +153,36 @@
 
 	function natcrossListRefresh() {
 		$('#natcrossListDataGrid').datagrid('reload');
+	}
+
+    function searchFilter(dataList){
+		console.log(dataList)
+		const port = $('#search-portNum').numberbox('getValue');
+		const portType = $('#search-portType').combobox('getValue');
+		const portDesc = $('#search-portDesc').textbox('getValue');
+
+		const result = [];
+		for (const index in dataList) {
+			const model = dataList[index];
+
+			if(
+					!!port && port != model.listenPort
+					|| portType>0 && portType != model.portType
+					|| !!portDesc && model.portDescribe.indexOf(portDesc)<0
+			){
+				continue;
+			}
+
+			result.push(model);
+		}
+
+		return result;
+    }
+
+	function clearSearch() {
+		$('#search-portNum').numberbox('clear');
+		$('#search-portType').combobox('setValue', -1);
+		$('#search-portDesc').textbox('clear');
 	}
 
 	function createListenPort() {
@@ -479,7 +524,7 @@
 				</tr>
 				<tr>
 					<td style="text-align: right;">证书密码：</td>
-					<td><input id="natcrossList-panel-certPasswrod"
+					<td><input id="natcrossList-panel-certPassword"
 						name="certPassword" class="easyui-textbox"
 						data-options="prompt:'配置证书必须要有密码'"></td>
 				</tr>
@@ -502,6 +547,12 @@
 				onclick="stopListen();">停止某个端口</a> <a href="#"
 				class="easyui-linkbutton" data-options="iconCls:'icon-remove'"
 				onclick="removeListen();">移除某个监听</a>
+		</div>
+        <div>
+            <input id="search-portNum" class="easyui-numberbox" data-options="prompt:'端口号'" style="width:100px">
+            <input id="search-portType" class="easyui-combobox" style="width:100px">
+            <input id="search-portDesc" class="easyui-textbox" data-options="prompt:'接口描述'" style="width:100px">
+			<a href="#" class="easyui-linkbutton" data-options="iconCls:''" onclick="clearSearch();">清空条件</a>
 		</div>
 	</div>
 	<div class="container-fluid panel-body" style="padding-bottom: 0px">
