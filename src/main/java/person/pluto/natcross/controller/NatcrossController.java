@@ -123,8 +123,7 @@ public class NatcrossController {
     public ResultModel updateListenPort(ListenPort listenPort,
             @RequestParam(name = "certFile", required = false) MultipartFile certFile) throws Exception {
 
-        if (listenPort == null || listenPort.getListenPort() == null ||
-                (listenPort.getDestIp() != null && !ValidatorUtils.isIPv4Address(listenPort.getDestIp()))) {
+        if (listenPort == null || listenPort.getListenPort() == null || (listenPort.getDestIp() != null)) {
             return ResultEnum.PARAM_FAIL.toResultModel();
         }
 
