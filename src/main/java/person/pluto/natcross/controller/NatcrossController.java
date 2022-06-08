@@ -41,10 +41,10 @@ public class NatcrossController {
 
     /**
      * 获取可用的端口类型
-     * 
+     *
+     * @return
      * @author Pluto
      * @since 2020-01-10 13:57:07
-     * @return
      */
     @RequestMapping("/usablePortTypes")
     public ResultModel usablePortTypes() {
@@ -55,18 +55,18 @@ public class NatcrossController {
     /**
      * 创建新的监听，并保存记录
      *
-     * @author Pluto
-     * @since 2019-07-22 14:20:35
      * @param listenPort
      * @return
      * @throws Exception
+     * @author Pluto
+     * @since 2019-07-22 14:20:35
      */
     @RequestMapping("/createListenPort")
     public ResultModel createListenPort(ListenPort listenPort,
             @RequestParam(name = "certFile", required = false) MultipartFile certFile) throws Exception {
 
-        if (listenPort == null || listenPort.getListenPort() == null || listenPort.getDestIp() == null
-                || !ValidatorUtils.isIPv4Address(listenPort.getDestIp()) || listenPort.getDestPort() == null) {
+        if (listenPort == null || listenPort.getListenPort() == null || listenPort.getDestIp() == null ||
+                listenPort.getDestPort() == null) {
             return ResultEnum.PARAM_FAIL.toResultModel();
         }
 
@@ -113,18 +113,18 @@ public class NatcrossController {
     /**
      * 更新监听记录
      *
-     * @author Pluto
-     * @since 2019-07-22 14:20:35
      * @param listenPort
      * @return
      * @throws Exception
+     * @author Pluto
+     * @since 2019-07-22 14:20:35
      */
     @RequestMapping("/updateListenPort")
     public ResultModel updateListenPort(ListenPort listenPort,
             @RequestParam(name = "certFile", required = false) MultipartFile certFile) throws Exception {
 
-        if (listenPort == null || listenPort.getListenPort() == null
-                || (listenPort.getDestIp() != null && !ValidatorUtils.isIPv4Address(listenPort.getDestIp()))) {
+        if (listenPort == null || listenPort.getListenPort() == null ||
+                (listenPort.getDestIp() != null && !ValidatorUtils.isIPv4Address(listenPort.getDestIp()))) {
             return ResultEnum.PARAM_FAIL.toResultModel();
         }
 
@@ -165,10 +165,10 @@ public class NatcrossController {
     /**
      * 创建新的监听
      *
-     * @author Pluto
-     * @since 2019-07-19 16:29:18
      * @param listenPort
      * @return
+     * @author Pluto
+     * @since 2019-07-19 16:29:18
      */
     @RequestMapping("createNewListen")
     public ResultModel createNewListen(Integer listenPort) {
@@ -190,10 +190,10 @@ public class NatcrossController {
     /**
      * 停止某个端口
      *
-     * @author Pluto
-     * @since 2019-07-22 15:16:26
      * @param listenPort
      * @return
+     * @author Pluto
+     * @since 2019-07-22 15:16:26
      */
     @RequestMapping("stopListen")
     public ResultModel stopListen(Integer listenPort) {
@@ -204,10 +204,10 @@ public class NatcrossController {
     /**
      * 移除某个监听
      *
-     * @author Pluto
-     * @since 2019-07-19 16:29:26
      * @param listenPort
      * @return
+     * @author Pluto
+     * @since 2019-07-19 16:29:26
      */
     @RequestMapping("removeListen")
     public ResultModel removeListen(Integer listenPort) {
@@ -219,9 +219,9 @@ public class NatcrossController {
     /**
      * 获取全部监听信息
      *
+     * @return
      * @author Pluto
      * @since 2019-07-19 16:29:33
-     * @return
      */
     @RequestMapping("getAllListenServer")
     public ResultModel getAllListenServer() {
@@ -260,10 +260,10 @@ public class NatcrossController {
 
     /**
      * 通过签名的方式进行获取全部接口信息
-     * 
+     *
+     * @return
      * @author Pluto
      * @since 2020-01-10 10:14:09
-     * @return
      */
     @RequestMapping("/projectSign/getAllListenServer")
     public ResultModel getAllListenServerProjectSign() {
